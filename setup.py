@@ -9,7 +9,7 @@ REQUIREMENTS = (HERE / "requirements.txt").read_text()
 setup(
     name="twitch-scraper",
     version="0.0.1",
-    description="",
+    description="Twitch scraper",
     long_description=README,
     long_description_content_type="text/markdown",
     author="Ziga Ivansek",

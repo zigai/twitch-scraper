@@ -1,12 +1,11 @@
 import datetime
-import re
 from datetime import datetime
 from pprint import pp, pprint
 
-import pretty_errors
 import requests
 from dateutil import parser as dateparser
 
+from twitch_clip import TwitchClip
 from twitch_user import TwitchUser
 from util import date_to_RFC3339
 
@@ -48,6 +47,9 @@ class TwitchApiClient:
             params=querystring,
         )
         data = response.json()["data"][0]
+        if data is None:
+            return None
+
         return TwitchUser(
             user_id=data["id"],
             username=data["login"],
@@ -83,14 +85,13 @@ class TwitchApiClient:
         game: str = None,
         started_at: datetime = None,
         ended_at: datetime = None,
-    ):
-        started_at = date_to_RFC3339(started_at)
-        ended_at = date_to_RFC3339(ended_at)
-
-        if username is not None:
-            username = self.get_channel(username=username).user_id
-        if game is not None:
-            game = self.get_game_id(game)
+        limit: int = 1000,
+    ) -> list[TwitchClip]:
+        """
+        # This seems to be a lie
+        if limit > 1000:
+            raise ValueError("Cannot return more than 1000 clips")
+        """
 
         def _req(
             broadcaster_id: str = None,
@@ -100,10 +101,9 @@ class TwitchApiClient:
             after: str = None,
             before: str = None,
         ):
-
             url = "https://api.twitch.tv/helix/clips"
             payload = ""
-            querystring = {}
+            querystring = {"first": 100}
             if broadcaster_id is not None:
                 querystring["broadcaster_id"] = broadcaster_id
             if game_id is not None:
@@ -127,23 +127,63 @@ class TwitchApiClient:
 
             return response.json()
 
-        assert type(started_at) is str
-        assert type(ended_at) is str
+        clips = []
+        if started_at is not None:
+            started_at = date_to_RFC3339(started_at)
+        if ended_at is not None:
+            ended_at = date_to_RFC3339(ended_at)
+
+        if username is not None:
+            username = self.get_channel(username=username).user_id
+        if game is not None:
+            game = self.get_game_id(game)
+
         data = _req(broadcaster_id=username, game_id=game, started_at=started_at, ended_at=ended_at)
+        clips.extend([TwitchClip.from_json_obj(i) for i in data["data"]])
         try:
             next_page_token = data["pagination"]["cursor"]
         except:
-            ...
-        while data.get("pagination")
+            next_page_token = None
+        while 1:
+            if next_page_token is None:
+                break
+
+            data = _req(
+                broadcaster_id=username,
+                game_id=game,
+                started_at=started_at,
+                ended_at=ended_at,
+                after=next_page_token,
+            )
+            new_data = [TwitchClip.from_json_obj(i) for i in data["data"]]
+            clips.extend(new_data)
+
+            if len(clips) >= limit:
+                break
+            try:
+                next_page_token = data["pagination"]["cursor"]
+            except:
+                next_page_token = None
+
+        return clips
+
 
 from secrets import *
+
+from stdl import fs
+
+
+def main2():
+    clips = fs.json_load("./clips_jankos5000.json")
+    print(len(clips))
 
 
 def main():
     client = TwitchApiClient(client_id=client_id, bearer_token=bearer)
-    u = client.get_channel(username="jankos")
-    pprint(u.dict)
+    clips = client.get_clips(username="jankos", limit=5000)
+    clips = [i.dict for i in clips]
+    fs.json_dump(data=clips, path="./clips_jankos5000.json")
 
 
 if __name__ == '__main__':
-    main()
+    main2()
