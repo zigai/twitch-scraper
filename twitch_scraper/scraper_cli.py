@@ -1,6 +1,6 @@
 from secrets import *
 
-from scraper import TwitchScraper
+from twitch_scraper import TwitchScraper
 
 
 def main():

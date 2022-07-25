@@ -5,8 +5,7 @@ from pprint import pp, pprint
 import requests
 from dateutil import parser as dateparser
 
-from twitch_clip import TwitchClip
-from twitch_user import TwitchUser
+from twitch_scraper import TwitchClip, TwitchUser
 from util import date_to_RFC3339
 
 GAME_IDS = {
