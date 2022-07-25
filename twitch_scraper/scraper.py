@@ -32,6 +32,18 @@ class TwitchScraper(TwitchApiClient):
         ended_at: datetime = None,
         limit: int = 1000,
     ):
+        """
+        Scrape Twitch.tv clips
+
+        Args:
+            username: username of the broadcaster for whom clips are returned
+            game: name of the game for which clips are returned
+            started_at: starting date/time for returned clips
+            ended_at: ending date/time for returned clips
+            limit: 
+        Returns:
+            None
+        """
         clips = self.get_clips(username, game, started_at, ended_at, limit)
         for i in clips:
             if self.verbose:
@@ -44,6 +56,14 @@ class TwitchScraper(TwitchApiClient):
             time.sleep(self.delay_seconds)
 
     def profiles(self, usernames: list[str]):
+        """
+        Scrape Twitch.tv user profiles
+
+        Args:
+            usernames: usernames of the profiles to scrape
+        Returns:
+            None
+        """
         data = []
         for i in usernames:
             user = self.get_channel(username=i)
