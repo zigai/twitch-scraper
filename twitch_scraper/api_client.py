@@ -166,24 +166,3 @@ class TwitchApiClient:
                 next_page_token = None
 
         return clips
-
-
-from secrets import *
-
-from stdl import fs
-
-
-def main2():
-    clips = fs.json_load("./clips_jankos5000.json")
-    print(len(clips))
-
-
-def main():
-    client = TwitchApiClient(client_id=client_id, bearer_token=bearer)
-    clips = client.get_clips(username="jankos", limit=5000)
-    clips = [i.dict for i in clips]
-    fs.json_dump(data=clips, path="./clips_jankos5000.json")
-
-
-if __name__ == '__main__':
-    main2()

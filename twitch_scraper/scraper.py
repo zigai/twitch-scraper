@@ -1,7 +1,10 @@
 import datetime
+import os
 import time
 from datetime import datetime
 
+from stdl.datetime_util import fmt_datetime
+from stdl.fs import json_dump
 from stdl.str_util import Color, str_with_color
 
 from api_client import TwitchApiClient
@@ -37,5 +40,23 @@ class TwitchScraper(TwitchApiClient):
                        f" ({str_with_color(i.url,Color.LIGHT_BLUE)})"))
             i.download(directory=self.save_directory, progressbar=self.verbose)
             if self.verbose:
-                print(str_with_color("_" * 64, Color.UNDERLINE))
+                print("_" * 64)
             time.sleep(self.delay_seconds)
+
+    def profiles(self, usernames: list[str]):
+        data = []
+        for i in usernames:
+            user = self.get_channel(username=i)
+            username_str = str_with_color(i, Color.LIGHT_BLUE)
+            if self.verbose:
+                print(f"Getting data for user '{username_str}' ...")
+            if user is None:
+                if self.verbose:
+                    print(str_with_color(f"User '{i}' not found", Color.RED))
+            else:
+                data.append(user.dict)
+                time.sleep(self.delay_seconds)
+        today = fmt_datetime(t_sep=" - ")
+        filename = f"users.{today}.json"
+        path = f"{self.save_directory}{os.sep}{filename}"
+        json_dump(data, path=path)
