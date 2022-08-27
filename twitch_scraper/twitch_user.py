@@ -1,10 +1,10 @@
 import datetime
 
-from dathas import Dathas, dataclass
+from stdl.dataclass import Data, dataclass
 
 
 @dataclass()
-class TwitchUser(Dathas):
+class TwitchUser(Data):
     user_id: str
     username: str
     display_name: str

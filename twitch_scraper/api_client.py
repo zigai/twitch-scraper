@@ -3,26 +3,40 @@ from datetime import datetime
 from pprint import pp, pprint
 
 import requests
-from dateutil import parser as dateparser
+from stdl import fs
+from stdl.datetime_u import parse_datetime
 
-from twitch_scraper import TwitchClip, TwitchUser
-from util import date_to_RFC3339
-
-GAME_IDS = {
-    "League of Legends": 21779,
-    "Valorant": 516575,
-    "Minecraft": 27471,
-    "Just Chatting": 509658,
-}
+from twitch_scraper.twitch_clip import TwitchClip
+from twitch_scraper.twitch_user import TwitchUser
+from twitch_scraper.util import date_to_RFC3339
 
 
 class TwitchApiClient:
 
-    def __init__(self, client_id: str, bearer_token: str, verbose: bool = False) -> None:
+    def __init__(self,
+                 client_id: str,
+                 bearer_token: str,
+                 cache_path: str = None,
+                 verbose: bool = False) -> None:
         self.client_id = client_id
         self.bearer_token = bearer_token
         self.verbose = verbose
         self.headers = {'Authorization': f"Bearer {self.bearer_token}", 'Client-Id': self.client_id}
+        self.cache_path = cache_path
+        if self.cache_path is not None:
+            if fs.File(cache_path).exists:
+                self.cache = fs.json_load(self.cache_path)
+            else:
+                self.cache = self.__get_empty_cache()
+        else:
+            self.cache = self.__get_empty_cache()
+
+    def __get_empty_cache(self):
+        return {"game_id": {}}
+
+    def save_cache(self):
+        if self.cache_path is not None:
+            fs.json_dump(self.cache, self.cache_path)
 
     def get_channel(self, user_id: str = None, username: str = None):
         if user_id is None and username is None:
@@ -57,16 +71,16 @@ class TwitchApiClient:
             view_count=data["view_count"],
             profile_image_url=data["profile_image_url"],
             offline_image_url=data["offline_image_url"],
-            created_at=dateparser.parse(data["created_at"]),
+            created_at=parse_datetime(data["created_at"]),
             broadcaster_type=data["broadcaster_type"],
         )
 
     def get_game_id(self, name: str):
-        if name in GAME_IDS:
-            return GAME_IDS[name]
+        if name in self.cache["game_id"]:
+            return self.cache["game_id"][name]
 
         url = "https://api.twitch.tv/helix/games"
-        querystring = {"name": "League of Legends"}
+        querystring = {"name": name}
         payload = ""
         response = requests.request(
             "GET",
@@ -76,7 +90,10 @@ class TwitchApiClient:
             params=querystring,
         )
         response = response.json()
-        return response["data"]["id"]
+
+        game_id = response["data"][0]["id"]
+        self.cache["game_id"][name] = game_id
+        return game_id
 
     def get_clips(
         self,

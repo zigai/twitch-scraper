@@ -1,16 +1,15 @@
 import datetime
 import os
 import re
-from dataclasses import dataclass
 
-from dathas import Dathas
+from stdl.dataclass import Data, dataclass
 from stdl.datetime_util import fmt_date, parse_datetime
-from stdl.net_util import download
-from stdl.str_util import FilterStr
+from stdl.net_u import download
+from stdl.str_u import filter_filename
 
 
 @dataclass(order=True)
-class TwitchClip(Dathas):
+class TwitchClip(Data):
     view_count: int
     clip_id: str
     duration: float
@@ -34,12 +33,12 @@ class TwitchClip(Dathas):
 
     def _get_filename(self):
         dt = fmt_date(self.created_at.date())
-        title = FilterStr.filename(self.title).replace(".", "_").replace(" ", "_").strip()
+        title = self.title.replace(".", "_").replace(" ", "_").strip()
         filename = f"{self.game_id}.{self.streamer}{self.view_count}.{int(self.duration)}.{title}.{dt}.{self.language}.mp4"
-        return filename
+        return filter_filename(filename)
 
     def download(self, directory: str, progressbar=False):
-        path = directory + os.sep + FilterStr.filename(self._get_filename())
+        path = directory + os.sep + self._get_filename()
         r = download(url=self.file_url, path=path, overwrite=True, progressbar=progressbar)
         return r[0]
 

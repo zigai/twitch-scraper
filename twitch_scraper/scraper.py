@@ -1,13 +1,12 @@
-import datetime
 import os
 import time
 from datetime import datetime
 
-from stdl.datetime_util import fmt_datetime
+from stdl.datetime_u import fmt_datetime
 from stdl.fs import json_dump
-from stdl.str_util import Color, str_with_color
+from stdl.str_u import FG, colored
 
-from twitch_scraper import TwitchApiClient
+from twitch_scraper.api_client import TwitchApiClient
 
 
 class TwitchScraper(TwitchApiClient):
@@ -20,7 +19,7 @@ class TwitchScraper(TwitchApiClient):
         verbose: bool = True,
         delay_seconds: float = 5,
     ) -> None:
-        super().__init__(client_id, bearer_token, verbose)
+        super().__init__(client_id, bearer_token, "./cache.json", verbose)
         self.save_directory = save_directory
         self.delay_seconds = delay_seconds
 
@@ -36,20 +35,20 @@ class TwitchScraper(TwitchApiClient):
         Scrape Twitch.tv clips
 
         Args:
-            username: username of the broadcaster for whom clips are returned
-            game: name of the game for which clips are returned
-            started_at: starting date/time for returned clips
-            ended_at: ending date/time for returned clips
-            limit: 
+            username (str): username of the broadcaster for whom clips are returned
+            game (str): name of the game for which clips are returned
+            started_at (datetime.datetime): starting date/time for returned clips
+            ended_at (datetime.datetime): ending date/time for returned clips
+            limit (int): how many clips to return 
         Returns:
             None
         """
         clips = self.get_clips(username, game, started_at, ended_at, limit)
         for i in clips:
             if self.verbose:
-                print((f"{str_with_color('Downloading',Color.LIGHT_GREEN)} "
-                       f"'{str_with_color(i.title,Color.BOLD)}'"
-                       f" ({str_with_color(i.url,Color.LIGHT_BLUE)})"))
+                print((f"{colored('Downloading',FG.BRIGHT_GREEN)} "
+                       f"'{colored(i.title,FG.WHITE_BOLD)}'"
+                       f" ({colored(i.url,FG.BRIGHT_BLUE)})"))
             i.download(directory=self.save_directory, progressbar=self.verbose)
             if self.verbose:
                 print("_" * 64)
@@ -67,12 +66,12 @@ class TwitchScraper(TwitchApiClient):
         data = []
         for i in usernames:
             user = self.get_channel(username=i)
-            username_str = str_with_color(i, Color.LIGHT_BLUE)
+            username_str = colored(i, FG.BRIGHT_BLUE)
             if self.verbose:
                 print(f"Getting data for user '{username_str}' ...")
             if user is None:
                 if self.verbose:
-                    print(str_with_color(f"User '{i}' not found", Color.RED))
+                    print(colored(f"User '{i}' not found", FG.RED))
             else:
                 data.append(user.dict)
                 time.sleep(self.delay_seconds)
