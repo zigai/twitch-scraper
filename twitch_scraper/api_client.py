@@ -8,16 +8,18 @@ from stdl.datetime_u import parse_datetime
 
 from twitch_scraper.twitch_clip import TwitchClip
 from twitch_scraper.twitch_user import TwitchUser
-from twitch_scraper.util import date_to_RFC3339
+from twitch_scraper.util import date_to_rfc3339
 
 
 class TwitchApiClient:
 
-    def __init__(self,
-                 client_id: str,
-                 bearer_token: str,
-                 cache_path: str = None,
-                 verbose: bool = False) -> None:
+    def __init__(
+        self,
+        client_id: str,
+        bearer_token: str,
+        cache_path: str = None,
+        verbose: bool = False,
+    ) -> None:
         self.client_id = client_id
         self.bearer_token = bearer_token
         self.verbose = verbose
@@ -145,9 +147,9 @@ class TwitchApiClient:
 
         clips = []
         if started_at is not None:
-            started_at = date_to_RFC3339(started_at)
+            started_at = date_to_rfc3339(started_at)
         if ended_at is not None:
-            ended_at = date_to_RFC3339(ended_at)
+            ended_at = date_to_rfc3339(ended_at)
 
         if username is not None:
             username = self.get_channel(username=username).user_id
