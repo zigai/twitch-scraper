@@ -12,9 +12,9 @@ class TwitchUser(Data):
     created_at: datetime.datetime
     view_count: int
     description: str
-    email: str = None
-    offline_image_url: str = None
-    profile_image_url: str = None
+    email: str | None = None
+    offline_image_url: str | None = None
+    profile_image_url: str | None = None
 
     @property
     def twitch_url(self):

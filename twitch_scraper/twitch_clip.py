@@ -19,10 +19,10 @@ class TwitchClip(Data):
     created_at: datetime.datetime
     url: str
     thumbnail_url: str
-    game_id: int = None
-    creator_name: str = None
-    embed_url: str = None
-    video_id: int = None
+    game_id: int | None = None
+    creator_name: str | None = None
+    embed_url: str | None = None
+    video_id: int | None = None
 
     @property
     def file_url(self):
