@@ -12,7 +12,6 @@ from twitch_scraper.util import date_to_rfc3339
 
 
 class TwitchApiClient:
-
     def __init__(
         self,
         client_id: str,
@@ -23,7 +22,7 @@ class TwitchApiClient:
         self.client_id = client_id
         self.bearer_token = bearer_token
         self.verbose = verbose
-        self.headers = {'Authorization': f"Bearer {self.bearer_token}", 'Client-Id': self.client_id}
+        self.headers = {"Authorization": f"Bearer {self.bearer_token}", "Client-Id": self.client_id}
         self.cache_path = cache_path
         if self.cache_path is not None:
             if fs.File(cache_path).exists:

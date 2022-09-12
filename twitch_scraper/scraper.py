@@ -10,7 +10,6 @@ from twitch_scraper.api_client import TwitchApiClient
 
 
 class TwitchScraper(TwitchApiClient):
-
     def __init__(
         self,
         save_directory: str,
@@ -39,16 +38,20 @@ class TwitchScraper(TwitchApiClient):
             game (str): name of the game for which clips are returned
             started_at (datetime.datetime): starting date/time for returned clips
             ended_at (datetime.datetime): ending date/time for returned clips
-            limit (int): how many clips to return 
+            limit (int): how many clips to return
         Returns:
             None
         """
         clips = self.get_clips(username, game, started_at, ended_at, limit)
         for i in clips:
             if self.verbose:
-                print((f"{colored('Downloading',FG.BRIGHT_GREEN)} "
-                       f"'{colored(i.title,FG.WHITE_BOLD)}'"
-                       f" ({colored(i.url,FG.BRIGHT_BLUE)})"))
+                print(
+                    (
+                        f"{colored('Downloading',FG.BRIGHT_GREEN)} "
+                        f"'{colored(i.title,FG.BOLD)}'"
+                        f" ({colored(i.url,FG.BRIGHT_BLUE)})"
+                    )
+                )
             i.download(directory=self.save_directory, progressbar=self.verbose)
             if self.verbose:
                 print("_" * 64)
