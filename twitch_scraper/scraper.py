@@ -24,10 +24,10 @@ class TwitchScraper(TwitchApiClient):
 
     def clips(
         self,
-        username: str = None,
-        game: str = None,
-        started_at: datetime = None,
-        ended_at: datetime = None,
+        username: str | None = None,
+        game: str | None = None,
+        started_at: datetime | None = None,
+        ended_at: datetime | None = None,
         limit: int = 1000,
     ):
         """
@@ -47,9 +47,9 @@ class TwitchScraper(TwitchApiClient):
             if self.verbose:
                 print(
                     (
-                        f"{colored('Downloading',FG.BRIGHT_GREEN)} "
+                        f"{colored('Downloading',FG.LIGHT_GREEN)} "
                         f"'{colored(i.title,FG.BOLD)}'"
-                        f" ({colored(i.url,FG.BRIGHT_BLUE)})"
+                        f" ({colored(i.url,FG.LIGHT_BLUE)})"
                     )
                 )
             i.download(directory=self.save_directory, progressbar=self.verbose)
@@ -69,7 +69,7 @@ class TwitchScraper(TwitchApiClient):
         data = []
         for i in usernames:
             user = self.get_channel(username=i)
-            username_str = colored(i, FG.BRIGHT_BLUE)
+            username_str = colored(i, FG.LIGHT_BLUE)
             if self.verbose:
                 print(f"Getting data for user '{username_str}' ...")
             if user is None:

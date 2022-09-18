@@ -16,7 +16,7 @@ class TwitchApiClient:
         self,
         client_id: str,
         bearer_token: str,
-        cache_path: str = None,
+        cache_path: str | None = None,
         verbose: bool = False,
     ) -> None:
         self.client_id = client_id
@@ -39,7 +39,7 @@ class TwitchApiClient:
         if self.cache_path is not None:
             fs.json_dump(self.cache, self.cache_path)
 
-    def get_channel(self, user_id: str = None, username: str = None):
+    def get_channel(self, user_id: str | None = None, username: str | None = None):
         if user_id is None and username is None:
             raise ValueError("'user_id' OR 'username' must be specified")
         if user_id and username:
@@ -98,10 +98,10 @@ class TwitchApiClient:
 
     def get_clips(
         self,
-        username: str = None,
-        game: str = None,
-        started_at: datetime = None,
-        ended_at: datetime = None,
+        username: str | None = None,
+        game: str | None = None,
+        started_at: datetime | None = None,
+        ended_at: datetime | None = None,
         limit: int = 1000,
     ) -> list[TwitchClip]:
         """
@@ -111,12 +111,12 @@ class TwitchApiClient:
         """
 
         def _req(
-            broadcaster_id: str = None,
-            game_id: str = None,
-            started_at: str = None,
-            ended_at: str = None,
-            after: str = None,
-            before: str = None,
+            broadcaster_id: str | None = None,
+            game_id: str | None = None,
+            started_at: str | None = None,
+            ended_at: str | None = None,
+            after: str | None = None,
+            before: str | None = None,
         ):
             url = "https://api.twitch.tv/helix/clips"
             payload = ""
