@@ -12,7 +12,7 @@ setup(
     description="Twitch scraper",
     long_description=README,
     long_description_content_type="text/markdown",
-    author="Ziga Ivansek",
+    author="Žiga Ivanšek",
     author_email="ziga.ivansek@gmail.com",
     url="https://github.com/zigai/twitch-scraper",
     classifiers=[
