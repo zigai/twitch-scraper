@@ -3,7 +3,7 @@ import os
 import re
 
 from stdl.dataclass import Data, dataclass
-from stdl.datetime_util import fmt_date, parse_datetime
+from stdl.datetime_u import fmt_date, parse_datetime
 from stdl.net_u import download
 from stdl.str_u import filter_filename
 

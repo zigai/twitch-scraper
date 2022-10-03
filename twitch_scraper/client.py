@@ -1,6 +1,5 @@
 import datetime
 from datetime import datetime
-from pprint import pp, pprint
 
 import requests
 from stdl import fs
