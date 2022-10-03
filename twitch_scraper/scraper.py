@@ -6,7 +6,7 @@ from stdl.datetime_u import fmt_datetime
 from stdl.fs import json_dump
 from stdl.str_u import FG, colored
 
-from twitch_scraper.api_client import TwitchApiClient
+from twitch_scraper.client import TwitchApiClient
 
 
 class TwitchScraper(TwitchApiClient):

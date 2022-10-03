@@ -6,8 +6,8 @@ import requests
 from stdl import fs
 from stdl.datetime_u import parse_datetime
 
-from twitch_scraper.twitch_clip import TwitchClip
-from twitch_scraper.twitch_user import TwitchUser
+from twitch_scraper.clip import TwitchClip
+from twitch_scraper.user import TwitchUser
 from twitch_scraper.util import date_to_rfc3339
 
 
