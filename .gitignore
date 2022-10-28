@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 secrets.py
 *cache.json
+example*.py
