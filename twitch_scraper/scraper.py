@@ -12,15 +12,16 @@ from twitch_scraper.client import TwitchApiClient
 class TwitchScraper(TwitchApiClient):
     def __init__(
         self,
-        save_directory: str,
+        save_dir: str,
         client_id: str,
-        bearer_token: str,
+        bearer: str,
         verbose: bool = True,
-        delay_seconds: float = 5,
+        delay: float = 5,
+        cache: str | None = None,
     ) -> None:
-        super().__init__(client_id, bearer_token, "./cache.json", verbose)
-        self.save_directory = save_directory
-        self.delay_seconds = delay_seconds
+        super().__init__(client_id, bearer, cache, verbose)
+        self.save_directory = save_dir
+        self.delay_seconds = delay
 
     def clips(
         self,
@@ -34,11 +35,11 @@ class TwitchScraper(TwitchApiClient):
         Scrape Twitch.tv clips
 
         Args:
-            username (str): username of the broadcaster for whom clips are returned
-            game (str): name of the game for which clips are returned
-            started_at (datetime.datetime): starting date/time for returned clips
-            ended_at (datetime.datetime): ending date/time for returned clips
-            limit (int): how many clips to return
+            username (str): username of the streamer
+            game (str): name of the game
+            started_at (datetime.datetime): starting date/time
+            ended_at (datetime.datetime): ending date/time
+            limit (int): number of clips to
         Returns:
             None
         """
@@ -62,7 +63,7 @@ class TwitchScraper(TwitchApiClient):
         Scrape Twitch.tv user profiles
 
         Args:
-            usernames: usernames of the profiles to scrape
+            usernames: profiles to scrape
         Returns:
             None
         """

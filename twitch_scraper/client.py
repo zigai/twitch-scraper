@@ -1,6 +1,9 @@
 import datetime
 from datetime import datetime
+from pprint import pp, pprint
+from typing import Any
 
+import pretty_errors
 import requests
 from stdl import fs
 from stdl.datetime_u import parse_datetime
@@ -10,7 +13,17 @@ from twitch_scraper.user import TwitchUser
 from twitch_scraper.util import date_to_rfc3339
 
 
+class TwitchAuthError(Exception):
+    """"""
+
+    def __init__(self, message=""):
+        self.message = message
+        super().__init__(self.message)
+
+
 class TwitchApiClient:
+    API_URL = "https://api.twitch.tv/helix/"
+
     def __init__(
         self,
         client_id: str,
@@ -23,47 +36,66 @@ class TwitchApiClient:
         self.verbose = verbose
         self.headers = {"Authorization": f"Bearer {self.bearer_token}", "Client-Id": self.client_id}
         self.cache_path = cache_path
-        if self.cache_path is not None:
-            if fs.File(cache_path).exists:
-                self.cache = fs.json_load(self.cache_path)
-            else:
-                self.cache = self.__get_empty_cache()
-        else:
-            self.cache = self.__get_empty_cache()
+        self.cache = self._cache_load()
 
-    def __get_empty_cache(self):
-        return {"game_id": {}}
+    def __get_empty_cache(self) -> dict[str, dict[str, Any]]:
+        return {"game_id": {}, "users": {}, "clips": {}}
+
+    def _cache_load(self):
+        if self.cache_path is not None:
+            if fs.File(self.cache_path).exists:
+                return fs.json_load(self.cache_path)
+            else:
+                print(f"No cache found at '{self.cache_path}'")
+                return self.__get_empty_cache()
+        return self.__get_empty_cache()
+
+    def _cache_get(self, category: str, key: str):
+        try:
+            return self.cache[category][key]
+        except KeyError:
+            return None
+
+    def _cache_put(self, category: str, key: str, val):
+        self.cache[category][key] = val
+
+    def get(self, url: str, params: dict):
+        params = {k: v for k, v in params.items() if v is not None}
+        response = requests.request(
+            "GET",
+            self.API_URL + url,
+            data="",
+            headers=self.headers,
+            params=params,
+        )
+        data = response.json()
+        self._validate_response(data)
+        return data
 
     def save_cache(self):
         if self.cache_path is not None:
             fs.json_dump(self.cache, self.cache_path)
 
-    def get_channel(self, user_id: str | None = None, username: str | None = None):
+    def _validate_response(self, response: dict):
+        if response.get("error"):
+            raise TwitchAuthError(response)
+
+    def get_user(self, user_id: str | None = None, username: str | None = None):
         if user_id is None and username is None:
-            raise ValueError("'user_id' OR 'username' must be specified")
+            raise ValueError("'user_id' or 'username' must be specified")
         if user_id and username:
             raise ValueError("Both 'user_id' and 'username' cannot be specified specified")
 
-        url = "https://api.twitch.tv/helix/users"
-        querystring = {}
-        if user_id is not None:
-            querystring["id"] = user_id
-        if username is not None:
-            querystring["login"] = username
-        payload = ""
+        params = {}
+        params["id"] = user_id
+        params["login"] = username
 
-        response = requests.request(
-            "GET",
-            url,
-            data=payload,
-            headers=self.headers,
-            params=querystring,
-        )
-        data = response.json()["data"][0]
+        response = self.get("users", params)
+        data = response["data"][0]
         if data is None:
             return None
 
-        return TwitchUser(
+        user = TwitchUser(
             user_id=data["id"],
             username=data["login"],
             display_name=data["display_name"],
@@ -74,25 +106,14 @@ class TwitchApiClient:
             created_at=parse_datetime(data["created_at"]),
             broadcaster_type=data["broadcaster_type"],
         )
+        return user
 
     def get_game_id(self, name: str):
-        if name in self.cache["game_id"]:
-            return self.cache["game_id"][name]
-
-        url = "https://api.twitch.tv/helix/games"
-        querystring = {"name": name}
-        payload = ""
-        response = requests.request(
-            "GET",
-            url,
-            data=payload,
-            headers=self.headers,
-            params=querystring,
-        )
-        response = response.json()
-
+        if game_id := self._cache_get("game_id", name):
+            return game_id
+        response = self.get("games", {"name": name})
         game_id = response["data"][0]["id"]
-        self.cache["game_id"][name] = game_id
+        self._cache_put("game_id", name, game_id)
         return game_id
 
     def get_clips(
@@ -103,13 +124,12 @@ class TwitchApiClient:
         ended_at: datetime | None = None,
         limit: int = 1000,
     ) -> list[TwitchClip]:
-        """
-        # This seems to be a lie
-        if limit > 1000:
-            raise ValueError("Cannot return more than 1000 clips")
-        """
 
-        def _req(
+        # This seems to be a lie
+        # if limit > 1000:
+        #    raise ValueError("Cannot return more than 1000 clips")
+
+        def __get_clips(
             broadcaster_id: str | None = None,
             game_id: str | None = None,
             started_at: str | None = None,
@@ -117,63 +137,40 @@ class TwitchApiClient:
             after: str | None = None,
             before: str | None = None,
         ):
-            url = "https://api.twitch.tv/helix/clips"
-            payload = ""
-            querystring = {"first": 100}
-            if broadcaster_id is not None:
-                querystring["broadcaster_id"] = broadcaster_id
-            if game_id is not None:
-                querystring["game_id"] = game_id
-            if started_at is not None:
-                querystring["started_at"] = started_at
-            if ended_at is not None:
-                querystring["ended_at"] = ended_at
-            if after is not None:
-                querystring["after"] = after
-            if before is not None:
-                querystring["before"] = before
+            params = {k: v for k, v in locals().items() if v is not None}
+            params["first"] = 100
+            clips = self.get("clips", params)
+            return clips
 
-            response = requests.request(
-                "GET",
-                url,
-                data=payload,
-                headers=self.headers,
-                params=querystring,
-            )
-
-            return response.json()
-
-        clips = []
         if started_at is not None:
             started_at = date_to_rfc3339(started_at)
         if ended_at is not None:
             ended_at = date_to_rfc3339(ended_at)
-
         if username is not None:
-            username = self.get_channel(username=username).user_id
+            username = self.get_user(username=username).user_id
         if game is not None:
             game = self.get_game_id(game)
 
-        data = _req(broadcaster_id=username, game_id=game, started_at=started_at, ended_at=ended_at)
-        clips.extend([TwitchClip.from_json_obj(i) for i in data["data"]])
+        clips = []
+        data = __get_clips(
+            broadcaster_id=username, game_id=game, started_at=started_at, ended_at=ended_at
+        )
+        clips.extend([TwitchClip.from_json(i) for i in data["data"]])
+
         try:
             next_page_token = data["pagination"]["cursor"]
         except:
             next_page_token = None
-        while 1:
-            if next_page_token is None:
-                break
 
-            data = _req(
+        while next_page_token:
+            data = __get_clips(
                 broadcaster_id=username,
                 game_id=game,
                 started_at=started_at,
                 ended_at=ended_at,
                 after=next_page_token,
             )
-            new_data = [TwitchClip.from_json_obj(i) for i in data["data"]]
-            clips.extend(new_data)
-
+            clips.extend([TwitchClip.from_json(i) for i in data["data"]])
             if len(clips) >= limit:
                 break
             try:
