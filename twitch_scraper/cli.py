@@ -14,7 +14,7 @@ def main():
 
     description = colored(description, FG.MAGENTA, style=ST.BOLD)
 
-    CLI(TwitchScraper, description=description).run()
+    CLI(TwitchScraper, description=description)
 
 
 if __name__ == "__main__":
