@@ -43,7 +43,7 @@ class TwitchClip(Data):
         return r[0]
 
     @staticmethod
-    def from_json_obj(data: dict):
+    def from_json(data: dict):
         """TwitchClip from json object returned by Twitch Helix API"""
         return TwitchClip(
             clip_id=data["id"],

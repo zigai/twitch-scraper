@@ -17,5 +17,5 @@ class TwitchUser(Data):
     profile_image_url: str | None = None
 
     @property
-    def twitch_url(self):
+    def profile_url(self):
         return "https://www.twitch.tv/" + self.username

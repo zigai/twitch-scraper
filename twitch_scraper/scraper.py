@@ -23,6 +23,10 @@ class TwitchScraper(TwitchApiClient):
         self.save_directory = save_dir
         self.delay_seconds = delay
 
+    def log(self, text: str):
+        if self.verbose:
+            print(text)
+
     def clips(
         self,
         username: str | None = None,
@@ -45,17 +49,16 @@ class TwitchScraper(TwitchApiClient):
         """
         clips = self.get_clips(username, game, started_at, ended_at, limit)
         for i in clips:
-            if self.verbose:
-                print(
-                    (
-                        f"{colored('Downloading',FG.LIGHT_GREEN)} "
-                        f"'{colored(i.title,FG.BOLD)}'"
-                        f" ({colored(i.url,FG.LIGHT_BLUE)})"
-                    )
+            self.log(
+                (
+                    f"{colored('Downloading',FG.LIGHT_GREEN)} "
+                    f"'{colored(i.title,FG.BOLD)}'"
+                    f" ({colored(i.url,FG.LIGHT_BLUE)})"
                 )
+            )
             i.download(directory=self.save_directory, progressbar=self.verbose)
             if self.verbose:
-                print("_" * 64)
+                self.log("_" * 64)
             time.sleep(self.delay_seconds)
 
     def profiles(self, usernames: list[str]):
@@ -69,13 +72,10 @@ class TwitchScraper(TwitchApiClient):
         """
         data = []
         for i in usernames:
-            user = self.get_channel(username=i)
-            username_str = colored(i, FG.LIGHT_BLUE)
-            if self.verbose:
-                print(f"Getting data for user '{username_str}' ...")
+            user = self.get_user(username=i)
+            self.log(f"Getting data for user '{colored(i, FG.LIGHT_BLUE)}' ...")
             if user is None:
-                if self.verbose:
-                    print(colored(f"User '{i}' not found", FG.RED))
+                self.log(colored(f"User '{i}' not found", FG.RED))
             else:
                 data.append(user.dict)
                 time.sleep(self.delay_seconds)
