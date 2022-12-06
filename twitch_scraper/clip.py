@@ -3,9 +3,9 @@ import os
 import re
 
 from stdl.dataclass import Data, dataclass
-from stdl.datetime_u import fmt_date, parse_datetime
-from stdl.net_u import download
-from stdl.str_u import filter_filename
+from stdl.dt import fmt_date, parse_datetime_str
+from stdl.net import download
+from stdl.str_u import StringFilter
 
 
 @dataclass(order=True)
@@ -35,7 +35,7 @@ class TwitchClip(Data):
         dt = fmt_date(self.created_at.date())
         title = self.title.replace(".", "_").replace(" ", "_").strip()
         filename = f"{self.game_id}.{self.streamer}{self.view_count}.{int(self.duration)}.{title}.{dt}.{self.language}.mp4"
-        return filter_filename(filename)
+        return StringFilter.filename(filename)
 
     def download(self, directory: str, progressbar=False):
         path = directory + os.sep + self._get_filename()
@@ -56,7 +56,7 @@ class TwitchClip(Data):
             language=data["language"],
             title=data["title"],
             view_count=data["view_count"],
-            created_at=parse_datetime(data["created_at"]),
+            created_at=parse_datetime_str(data["created_at"]),
             thumbnail_url=data["thumbnail_url"],
             duration=data["duration"],
         )

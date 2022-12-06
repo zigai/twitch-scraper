@@ -3,10 +3,9 @@ from datetime import datetime
 from pprint import pp, pprint
 from typing import Any
 
-import pretty_errors
 import requests
 from stdl import fs
-from stdl.datetime_u import parse_datetime
+from stdl.dt import parse_datetime_str
 
 from twitch_scraper.clip import TwitchClip
 from twitch_scraper.user import TwitchUser
@@ -52,12 +51,12 @@ class TwitchApiClient:
 
     def _cache_get(self, category: str, key: str):
         try:
-            return self.cache[category][key]
+            return self.cache[category][key]  # type:ignore
         except KeyError:
             return None
 
     def _cache_put(self, category: str, key: str, val):
-        self.cache[category][key] = val
+        self.cache[category][key] = val  # type:ignore
 
     def get(self, url: str, params: dict):
         params = {k: v for k, v in params.items() if v is not None}
@@ -78,7 +77,7 @@ class TwitchApiClient:
 
     def _validate_response(self, response: dict):
         if response.get("error"):
-            raise TwitchAuthError(response)
+            raise TwitchAuthError(str(response))
 
     def get_user(self, user_id: str | None = None, username: str | None = None):
         if user_id is None and username is None:
@@ -103,7 +102,7 @@ class TwitchApiClient:
             view_count=data["view_count"],
             profile_image_url=data["profile_image_url"],
             offline_image_url=data["offline_image_url"],
-            created_at=parse_datetime(data["created_at"]),
+            created_at=parse_datetime_str(data["created_at"]),
             broadcaster_type=data["broadcaster_type"],
         )
         return user

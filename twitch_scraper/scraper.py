@@ -1,9 +1,5 @@
-import os
-import time
-from datetime import datetime
-
-from stdl.datetime_u import fmt_datetime
-from stdl.fs import json_dump
+from stdl.dt import datetime, fmt_datetime, time
+from stdl.fs import json_dump, os
 from stdl.str_u import FG, colored
 
 from twitch_scraper.client import TwitchApiClient
