@@ -1,9 +1,8 @@
-import datetime
 import os
 import re
 
 from stdl.dataclass import Data, dataclass
-from stdl.dt import fmt_date, parse_datetime_str
+from stdl.dt import datetime, fmt_date, parse_datetime_str
 from stdl.net import download
 from stdl.str_u import StringFilter
 
@@ -16,7 +15,7 @@ class TwitchClip(Data):
     streamer: str
     language: str
     title: str
-    created_at: datetime.datetime
+    created_at: datetime
     url: str
     thumbnail_url: str
     game_id: int | None = None
