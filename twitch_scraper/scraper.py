@@ -1,3 +1,5 @@
+from os import get_terminal_size
+
 from stdl.dt import datetime, fmt_datetime, time
 from stdl.fs import json_dump, os
 from stdl.str_u import FG, colored
@@ -53,8 +55,7 @@ class TwitchScraper(TwitchApiClient):
                 )
             )
             i.download(directory=self.save_directory, progressbar=self.verbose)
-            if self.verbose:
-                self.log("_" * 64)
+            self.log("_" * get_terminal_size().columns)
             time.sleep(self.delay_seconds)
 
     def profiles(self, usernames: list[str]):
@@ -75,6 +76,8 @@ class TwitchScraper(TwitchApiClient):
             else:
                 data.append(user.dict)
                 time.sleep(self.delay_seconds)
+                self.log("_" * get_terminal_size().columns)
+
         today = fmt_datetime(t_sep=" - ")
         filename = f"users.{today}.json"
         path = f"{self.save_directory}{os.sep}{filename}"
