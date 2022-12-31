@@ -1,4 +1,10 @@
 # Twitch scraper
+Twitch clip/profile scraper.
+Twitch API credentials are required.
 
-## Notes
-[API Scopes](https://dev.twitch.tv/docs/authentication/scopes#twitch-api-scopes)
+# Installation
+```
+pip install git+https://github.com/zigai/twitch-scraper.git
+```
+# License
+[MIT License](https://github.com/zigai/twitch-scraper/blob/master/LICENSE)
