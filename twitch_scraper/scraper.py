@@ -21,7 +21,7 @@ class TwitchScraper(TwitchApiClient):
         self.save_directory = save_dir
         self.delay_seconds = delay
 
-    def log(self, text: str):
+    def _log(self, text: str):
         if self.verbose:
             print(text)
 
@@ -47,7 +47,7 @@ class TwitchScraper(TwitchApiClient):
         """
         clips = self.get_clips(username, game, started_at, ended_at, limit)
         for i in clips:
-            self.log(
+            self._log(
                 (
                     f"{colored('Downloading',FG.LIGHT_GREEN)} "
                     f"'{colored(i.title,FG.BOLD)}'"
@@ -55,7 +55,7 @@ class TwitchScraper(TwitchApiClient):
                 )
             )
             i.download(directory=self.save_directory, progressbar=self.verbose)
-            self.log("_" * get_terminal_size().columns)
+            self._log("_" * get_terminal_size().columns)
             time.sleep(self.delay_seconds)
 
     def profiles(self, usernames: list[str]):
@@ -70,13 +70,13 @@ class TwitchScraper(TwitchApiClient):
         data = []
         for i in usernames:
             user = self.get_user(username=i)
-            self.log(f"Getting data for user '{colored(i, FG.LIGHT_BLUE)}' ...")
+            self._log(f"Getting data for user '{colored(i, FG.LIGHT_BLUE)}' ...")
             if user is None:
-                self.log(colored(f"User '{i}' not found", FG.RED))
+                self._log(colored(f"User '{i}' not found", FG.RED))
             else:
                 data.append(user.dict)
                 time.sleep(self.delay_seconds)
-                self.log("_" * get_terminal_size().columns)
+                self._log("_" * get_terminal_size().columns)
 
         today = fmt_datetime(t_sep=" - ")
         filename = f"users.{today}.json"
