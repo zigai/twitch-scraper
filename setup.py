@@ -8,7 +8,7 @@ REQUIREMENTS = (HERE / "requirements.txt").read_text()
 
 setup(
     name="twitch-scraper",
-    version="0.0.1",
+    version="0.0.2",
     description="Twitch profile & clip scraper",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -25,4 +25,9 @@ setup(
     ],
     packages=find_packages(),
     install_requires=REQUIREMENTS,
+    entry_points={
+        "console_scripts": [
+            "twitch-scraper = twitch_scraper.cli:cli",
+        ],
+    },
 )
