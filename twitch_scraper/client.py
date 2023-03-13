@@ -139,9 +139,9 @@ class TwitchApiClient:
             return clips
 
         if started_at is not None:
-            started_at = date_to_rfc3339(started_at)
+            started_at = date_to_rfc3339(started_at)  # type:ignore
         if ended_at is not None:
-            ended_at = date_to_rfc3339(ended_at)
+            ended_at = date_to_rfc3339(ended_at)  # type:ignore
         if username is not None:
             username = self.get_user(username=username).user_id
         if game is not None:
@@ -149,7 +149,10 @@ class TwitchApiClient:
 
         clips = []
         data = __get_clips(
-            broadcaster_id=username, game_id=game, started_at=started_at, ended_at=ended_at
+            broadcaster_id=username,
+            game_id=game,
+            started_at=started_at,
+            ended_at=ended_at,
         )
         clips.extend([TwitchClip.from_json(i) for i in data["data"]])
 

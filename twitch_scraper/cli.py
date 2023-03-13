@@ -1,4 +1,4 @@
-def main():
+def cli():
     from interfacy_cli import CLI
     from stdl.str_u import FG, ST, colored
 
@@ -18,4 +18,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    cli()
