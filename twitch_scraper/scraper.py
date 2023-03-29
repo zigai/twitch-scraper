@@ -69,16 +69,16 @@ class TwitchScraper(TwitchApiClient):
             None
         """
         clips = self.get_clips(username, game, started_at, ended_at, limit)
-        for i in clips:
-            self.log(
+        for clip in clips:
+            self._log(
                 (
                     f"{colored('Downloading',FG.LIGHT_GREEN)} "
                     f"'{colored(clip.title,FG.BOLD)}'"
                     f" ({colored(clip.url,FG.LIGHT_BLUE)})"
                 )
             )
-            i.download(directory=self.save_directory, progressbar=self.verbose)
-            self.log("_" * get_terminal_size().columns)
+            clip.download(directory=self.save_directory, progressbar=self.verbose)
+            self._log("_" * get_terminal_size().columns)
             time.sleep(self.delay_seconds)
 
     def profiles(self, usernames: list[str]):

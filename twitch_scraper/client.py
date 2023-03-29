@@ -10,8 +10,6 @@ from twitch_scraper.util import date_to_rfc3339
 
 
 class TwitchAuthError(Exception):
-    """"""
-
     def __init__(self, message=""):
         self.message = message
         super().__init__(self.message)
@@ -151,8 +149,8 @@ class TwitchApiClient:
         data = __get_clips(
             broadcaster_id=username,
             game_id=game,
-            started_at=started_at,
-            ended_at=ended_at,
+            started_at=started_at,  # type:ignore
+            ended_at=ended_at,  # type:ignore
         )
         clips.extend([TwitchClip.from_json(i) for i in data["data"]])
 
@@ -165,8 +163,8 @@ class TwitchApiClient:
             data = __get_clips(
                 broadcaster_id=username,
                 game_id=game,
-                started_at=started_at,
-                ended_at=ended_at,
+                started_at=started_at,  # type:ignore
+                ended_at=ended_at,  # type:ignore
                 after=next_page_token,
             )
             clips.extend([TwitchClip.from_json(i) for i in data["data"]])

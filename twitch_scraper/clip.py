@@ -36,9 +36,11 @@ class TwitchClip(Data):
         filename = f"{self.game_id}.{self.streamer}{self.view_count}.{int(self.duration)}.{title}.{dt}.{self.language}.mp4"
         return StringFilter.filename(filename)
 
-    def download(self, directory: str, progressbar=False):
+    def download(self, directory: str, maxsize: int | str | None = None, progressbar=False):
         path = directory + os.sep + self._get_filename()
-        r = download(url=self.file_url, path=path, overwrite=True, progressbar=progressbar)
+        r = download(
+            url=self.file_url, path=path, overwrite=True, progressbar=progressbar, maxsize=maxsize
+        )
         return r[0]
 
     @staticmethod
