@@ -54,7 +54,7 @@ usage: twitch-scraper profiles [-h] -s -c -b [-v] [-d] [-ca] -u
 Scrape Twitch.tv user profiles
 
 options:
-  -h, --help           show this help message and exit
+  -h, --help       show this help message and exit
   -s, --save-dir   directory to save files | str (*)
   -c, --client-id  twitch.tv client ID | str (*)
   -b, --bearer     twitch.tv bearer token | str (*)
