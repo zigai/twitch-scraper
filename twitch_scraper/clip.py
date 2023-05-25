@@ -33,6 +33,7 @@ class TwitchClip(Data):
     def _get_filename(self):
         dt = fmt_date(self.created_at.date())
         title = self.title.replace(".", "_").replace(" ", "_").strip()
+        # game_id.streamer.view_count.duration.title.date.language.mp4
         filename = f"{self.game_id}.{self.streamer}{self.view_count}.{int(self.duration)}.{title}.{dt}.{self.language}.mp4"
         return StringFilter.filename(filename)
 

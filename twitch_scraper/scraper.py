@@ -12,12 +12,12 @@ class TwitchScraper(TwitchApiClient):
     Twitch.tv scraper
 
     Args:
-        save_dir (str): Save directory
-        client_id (str): Twitch.tv client ID
-        bearer (str): Twitch.tv bearer token
-        verbose (bool): Print status messages
-        delay (float): Delay between requests (seconds)
-        cache (str): Path to cache file
+        save_dir (str): save directory
+        client_id (str): twitch.tv client ID
+        bearer (str): twitch.tv bearer token
+        verbose (bool): print status messages
+        delay (float): delay between requests (seconds)
+        cache (str): path to cache file. cache is used to avoid duplicate requests
     """
 
     def __init__(
@@ -30,15 +30,15 @@ class TwitchScraper(TwitchApiClient):
         cache: str | None = None,
     ) -> None:
         """
-        Twitch.tv scraper
+        Twitch.tv clip / profile scraper
 
         Args:
             save_dir (str): directory to save files
-            client_id (str): Twitch.tv client ID
-            bearer (str): Twitch.tv bearer token
+            client_id (str): twitch.tv client ID
+            bearer (str): twitch.tv bearer token
             verbose (bool): Print status messages
-            delay (float): Delay between requests (seconds)
-            cache (str): Path to cache file
+            delay (float): delay between requests (seconds)
+            cache (str): path to cache file
         """
         super().__init__(client_id, bearer, cache, verbose)
         self.save_directory = save_dir
@@ -57,14 +57,15 @@ class TwitchScraper(TwitchApiClient):
         limit: int = 1000,
     ):
         """
-        Scrape Twitch.tv clips
+        Scrape Twitch.tv clips.
 
         Args:
-            username (str): Username of the streamer
-            game (str): Mame of the game
-            started_at (datetime.datetime): Starting date/time
-            ended_at (datetime.datetime): Ending date/time
-            limit (int): Number of clips to scrape
+            username (str): username of the streamer
+            game (str): Name of the game
+            started_at (datetime.datetime): starting date/time
+            ended_at (datetime.datetime): ending date/time
+            limit (int): maximum number of clips to scrape
+
         Returns:
             None
         """
@@ -86,7 +87,8 @@ class TwitchScraper(TwitchApiClient):
         Scrape Twitch.tv user profiles
 
         Args:
-            usernames: Profiles to scrape
+            usernames (list[str]) : usernames of profiles to scrape
+
         Returns:
             None
         """
