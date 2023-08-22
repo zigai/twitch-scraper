@@ -1,10 +1,10 @@
 from os import get_terminal_size
 
+from twitch_scraper.client import TwitchApiClient
+
 from stdl.dt import datetime, fmt_datetime, time
 from stdl.fs import json_dump, os
-from stdl.str_u import FG, colored
-
-from twitch_scraper.client import TwitchApiClient
+from stdl.st import FG, colored
 
 
 class TwitchScraper(TwitchApiClient):
@@ -103,7 +103,7 @@ class TwitchScraper(TwitchApiClient):
                 time.sleep(self.delay_seconds)
                 self._log("_" * get_terminal_size().columns)
 
-        today = fmt_datetime(t_sep=" - ")
+        today = fmt_datetime(tsep=" - ")
         filename = f"users.{today}.json"
         path = f"{self.save_directory}{os.sep}{filename}"
         json_dump(data, path=path)

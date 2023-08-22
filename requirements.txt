@@ -1,2 +1,2 @@
-stdl>=0.4.4
+stdl>=0.4.6
 interfacy_cli

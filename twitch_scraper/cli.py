@@ -1,8 +1,8 @@
 def cli():
     from interfacy_cli import CLI
-    from stdl.str_u import FG, ST, colored
-
     from twitch_scraper.scraper import TwitchScraper
+
+    from stdl.st import FG, ST, colored
 
     description = """
  _            _ _       _                                          

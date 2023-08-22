@@ -1,12 +1,12 @@
 from typing import Any
 
 import requests
-from stdl import fs
-from stdl.dt import datetime, parse_datetime_str
-
 from twitch_scraper.clip import TwitchClip
 from twitch_scraper.user import TwitchUser
 from twitch_scraper.util import date_to_rfc3339
+
+from stdl import fs
+from stdl.dt import datetime, parse_datetime_str
 
 
 class TwitchAuthError(Exception):
@@ -118,7 +118,6 @@ class TwitchApiClient:
         ended_at: datetime | None = None,
         limit: int = 1000,
     ) -> list[TwitchClip]:
-
         # This seems to be a lie
         # if limit > 1000:
         #    raise ValueError("Cannot return more than 1000 clips")
@@ -141,13 +140,17 @@ class TwitchApiClient:
         if ended_at is not None:
             ended_at = date_to_rfc3339(ended_at)  # type:ignore
         if username is not None:
-            username = self.get_user(username=username).user_id
+            user = self.get_user(username=username)
+            if user is None:
+                user_id = None
+            else:
+                user_id = user.user_id
         if game is not None:
             game = self.get_game_id(game)
 
         clips = []
         data = __get_clips(
-            broadcaster_id=username,
+            broadcaster_id=user_id,  # type:ignore
             game_id=game,
             started_at=started_at,  # type:ignore
             ended_at=ended_at,  # type:ignore

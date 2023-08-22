@@ -4,7 +4,7 @@ import re
 from stdl.dataclass import Data, dataclass
 from stdl.dt import datetime, fmt_date, parse_datetime_str
 from stdl.net import download
-from stdl.str_u import StringFilter
+from stdl.st import StringFilter
 
 
 @dataclass(order=True)
