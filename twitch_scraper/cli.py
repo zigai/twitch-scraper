@@ -4,7 +4,7 @@ def cli():
 
     from stdl.st import FG, ST, colored
 
-    description = """
+    description = r"""
  _            _ _       _                                          
 | |___      _(_) |_ ___| |__    ___  ___ _ __ __ _ _ __   ___ _ __ 
 | __\ \ /\ / / | __/ __| '_ \  / __|/ __| '__/ _` | '_ \ / _ \ '__|
