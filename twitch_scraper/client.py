@@ -1,12 +1,12 @@
 from typing import Any
 
 import requests
+from stdl import fs
+from stdl.dt import datetime, parse_datetime_str
+
 from twitch_scraper.clip import TwitchClip
 from twitch_scraper.user import TwitchUser
 from twitch_scraper.util import date_to_rfc3339
-
-from stdl import fs
-from stdl.dt import datetime, parse_datetime_str
 
 
 class TwitchAuthError(Exception):
@@ -28,7 +28,10 @@ class TwitchApiClient:
         self.client_id = client_id
         self.bearer_token = bearer_token
         self.verbose = verbose
-        self.headers = {"Authorization": f"Bearer {self.bearer_token}", "Client-Id": self.client_id}
+        self.headers = {
+            "Authorization": f"Bearer {self.bearer_token}",
+            "Client-Id": self.client_id,
+        }
         self.cache_path = cache_path
         self.cache = self._cache_load()
 
@@ -78,7 +81,9 @@ class TwitchApiClient:
         if user_id is None and username is None:
             raise ValueError("'user_id' or 'username' must be specified")
         if user_id and username:
-            raise ValueError("Both 'user_id' and 'username' cannot be specified specified")
+            raise ValueError(
+                "Both 'user_id' and 'username' cannot be specified specified"
+            )
 
         params = {}
         params["id"] = user_id

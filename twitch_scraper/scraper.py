@@ -1,10 +1,10 @@
 from os import get_terminal_size
 
-from twitch_scraper.client import TwitchApiClient
-
-from stdl.dt import datetime, fmt_datetime, time
+from stdl.dt import datetime, datetime_fmt, time
 from stdl.fs import json_dump, os
 from stdl.st import FG, colored
+
+from twitch_scraper.client import TwitchApiClient
 
 
 class TwitchScraper(TwitchApiClient):
@@ -99,11 +99,11 @@ class TwitchScraper(TwitchApiClient):
             if user is None:
                 self._log(colored(f"User '{username}' not found", FG.RED))
             else:
-                data.append(user.dict)
+                data.append(user.dict())
                 time.sleep(self.delay_seconds)
                 self._log("_" * get_terminal_size().columns)
 
-        today = fmt_datetime(tsep=" - ")
+        today = datetime_fmt(tsep=" - ")
         filename = f"users.{today}.json"
         path = f"{self.save_directory}{os.sep}{filename}"
         json_dump(data, path=path)

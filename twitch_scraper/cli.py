@@ -14,8 +14,10 @@ def cli():
     """
 
     description = colored(description, FG.MAGENTA, style=ST.BOLD)
+    from interfacy_cli.click_parser import ClickParser
 
-    CLI(TwitchScraper, description=description)
+    # ClickParser(description=description).run(TwitchScraper, args=["clips", "--help"])
+    ClickParser(description=description).run(TwitchScraper)
 
 
 if __name__ == "__main__":

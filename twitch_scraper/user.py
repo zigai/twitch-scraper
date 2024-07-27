@@ -1,10 +1,9 @@
 import datetime
-
-from stdl.dataclass import Data, dataclass
+from dataclasses import asdict, dataclass
 
 
 @dataclass()
-class TwitchUser(Data):
+class TwitchUser:
     user_id: str
     username: str
     display_name: str
@@ -19,3 +18,6 @@ class TwitchUser(Data):
     @property
     def profile_url(self):
         return "https://www.twitch.tv/" + self.username
+
+    def dict(self):
+        return asdict(self)

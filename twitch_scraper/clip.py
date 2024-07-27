@@ -1,14 +1,14 @@
 import os
 import re
+from dataclasses import dataclass
 
-from stdl.dataclass import Data, dataclass
-from stdl.dt import datetime, fmt_date, parse_datetime_str
+from stdl.dt import date_fmt, datetime, parse_datetime_str
 from stdl.net import download
-from stdl.st import StringFilter
+from stdl.st import sf
 
 
 @dataclass(order=True)
-class TwitchClip(Data):
+class TwitchClip:
     view_count: int
     clip_id: str
     duration: float
@@ -31,16 +31,22 @@ class TwitchClip(Data):
         return s[0] + ".mp4"
 
     def _get_filename(self):
-        dt = fmt_date(self.created_at.date())
+        dt = date_fmt(self.created_at.date())
         title = self.title.replace(".", "_").replace(" ", "_").strip()
         # game_id.streamer.view_count.duration.title.date.language.mp4
         filename = f"{self.game_id}.{self.streamer}{self.view_count}.{int(self.duration)}.{title}.{dt}.{self.language}.mp4"
-        return StringFilter.filename(filename)
+        return sf.filename(filename)
 
-    def download(self, directory: str, maxsize: int | str | None = None, progressbar=False):
+    def download(
+        self, directory: str, maxsize: int | str | None = None, progressbar=False
+    ):
         path = directory + os.sep + self._get_filename()
         r = download(
-            url=self.file_url, path=path, overwrite=True, progressbar=progressbar, maxsize=maxsize
+            url=self.file_url,
+            path=path,
+            overwrite=True,
+            progressbar=progressbar,
+            maxsize=maxsize,
         )
         return r[0]
 
