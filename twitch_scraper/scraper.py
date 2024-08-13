@@ -1,10 +1,10 @@
 from os import get_terminal_size
 
+from twitch_scraper.client import TwitchApiClient
+
 from stdl.dt import datetime, datetime_fmt, time
 from stdl.fs import json_dump, os
 from stdl.st import FG, colored
-
-from twitch_scraper.client import TwitchApiClient
 
 
 class TwitchScraper(TwitchApiClient):

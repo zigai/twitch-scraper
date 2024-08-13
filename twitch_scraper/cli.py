@@ -1,8 +1,8 @@
 def cli():
     from interfacy_cli.click_parser import ClickParser
-    from stdl.st import FG, ST, colored
-
     from twitch_scraper.scraper import TwitchScraper
+
+    from stdl.st import FG, ST, colored
 
     description = r"""
  _            _ _       _                                          
