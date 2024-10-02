@@ -1,2 +1,2 @@
-stdl==0.5.4
-interfacy_cli==0.1.2
+stdl==0.5.5
+interfacy_cli==0.2.0
