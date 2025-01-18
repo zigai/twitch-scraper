@@ -1,2 +1,2 @@
-stdl==0.5.5
-interfacy_cli==0.2.0
+stdl>=0.5.5
+interfacy_cli>=0.2.0

@@ -1,10 +1,9 @@
-from os import get_terminal_size
-
-from twitch_scraper.client import TwitchApiClient
-
 from stdl.dt import datetime, datetime_fmt, time
 from stdl.fs import json_dump, os
+from stdl.log import br
 from stdl.st import FG, colored
+
+from twitch_scraper.client import TwitchApiClient
 
 
 class TwitchScraper(TwitchApiClient):
@@ -25,9 +24,9 @@ class TwitchScraper(TwitchApiClient):
         save_dir: str,
         client_id: str,
         bearer: str,
-        verbose: bool = True,
         delay: float = 0.5,
         cache: str | None = None,
+        verbose: bool = True,
     ) -> None:
         """
         Twitch.tv clip / profile scraper
@@ -36,9 +35,9 @@ class TwitchScraper(TwitchApiClient):
             save_dir (str): directory to save files
             client_id (str): twitch.tv client ID
             bearer (str): twitch.tv bearer token
-            verbose (bool): Print status messages
             delay (float): delay between requests (seconds)
             cache (str): path to cache file
+            verbose (bool): print status messages
         """
         super().__init__(client_id, bearer, cache, verbose)
         self.save_directory = save_dir
@@ -47,6 +46,10 @@ class TwitchScraper(TwitchApiClient):
     def _log(self, text: str):
         if self.verbose:
             print(text)
+
+    def _br(self):
+        if self.verbose:
+            br()
 
     def clips(
         self,
@@ -57,7 +60,7 @@ class TwitchScraper(TwitchApiClient):
         limit: int = 1000,
     ):
         """
-        Scrape Twitch.tv clips.
+        Scrape Twitch.tv clips
 
         Args:
             username (str): username of the streamer
@@ -66,8 +69,6 @@ class TwitchScraper(TwitchApiClient):
             ended_at (datetime.datetime): ending date/time
             limit (int): maximum number of clips to scrape
 
-        Returns:
-            None
         """
         clips = self.get_clips(username, game, started_at, ended_at, limit)
         for clip in clips:
@@ -79,7 +80,7 @@ class TwitchScraper(TwitchApiClient):
                 )
             )
             clip.download(directory=self.save_directory, progressbar=self.verbose)
-            self._log("_" * get_terminal_size().columns)
+            self._br()
             time.sleep(self.delay_seconds)
 
     def profiles(self, usernames: list[str]):
@@ -89,8 +90,6 @@ class TwitchScraper(TwitchApiClient):
         Args:
             usernames (list[str]) : usernames of profiles to scrape
 
-        Returns:
-            None
         """
         data = []
         for username in usernames:
@@ -101,7 +100,7 @@ class TwitchScraper(TwitchApiClient):
             else:
                 data.append(user.dict())
                 time.sleep(self.delay_seconds)
-                self._log("_" * get_terminal_size().columns)
+                self._br()
 
         today = datetime_fmt(tsep=" - ")
         filename = f"users.{today}.json"

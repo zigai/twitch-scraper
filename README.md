@@ -8,7 +8,8 @@ pip install git+https://github.com/zigai/twitch-scraper.git
 ```
 # CLI usage
 ```
-usage: twitch-scraper [-h] {clips,profiles} ...
+usage: twitch-scraper [-h] [-d] [-c] [--verbose | --no-verbose] SAVE-DIR CLIENT-ID BEARER {clips,profiles} ...
+
  _            _ _       _
 | |___      _(_) |_ ___| |__    ___  ___ _ __ __ _ _ __   ___ _ __
 | __\ \ /\ / / | __/ __| '_ \  / __|/ __| '__/ _` | '_ \ / _ \ '__|
@@ -17,51 +18,46 @@ usage: twitch-scraper [-h] {clips,profiles} ...
                                                   |_|
 
 positional arguments:
-  {clips,profiles}
+  SAVE-DIR                              directory to save files [type: str] (*)
+  CLIENT-ID                             twitch.tv client ID [type: str] (*)
+  BEARER                                twitch.tv bearer token [type: str] (*)
+  {clips,profiles} ...
 
 options:
-  -h, --help        show this help message and exit
+  -h, --help                            show this help message and exit
+  -d, --delay                           delay between requests (seconds) [type: float, default=0.5]
+  -c, --cache                           path to cache file [type: str?]
+  --verbose, --no-verbose               print status messages.
 
 commands:
-  clips             Scrape Twitch.tv clips
-  profiles          Scrape Twitch.tv user profile
+   clips            Scrape Twitch.tv clips.
+   profiles         Scrape Twitch.tv user profiles
 ```
 
 ```
-usage: twitch-scraper clips [-h] -s -c -b [-v] [-d] [-ca] [-u] [-g] [-st] [-e] [-l]
+usage: twitch-scraper SAVE-DIR CLIENT-ID BEARER clips [-h] [-u] [-g] [-s] [-e] [-l]
 
-Scrape Twitch.tv clips
+Scrape Twitch.tv clips.
 
 options:
-  -h, --help        show this help message and exit
-  -s, --save-dir    directory to save files | str (*)
-  -c, --client-id   twitch.tv client ID | str (*)
-  -b, --bearer      twitch.tv bearer token | str (*)
-  -v, --verbose     print status messages | bool = True
-  -d, --delay       delay between requests (seconds) | float = 0.5
-  -ca, --cache      path to cache file. cache is used to avoid duplicate requests | str
-  -u, --username    username of the streamer | str
-  -g, --game        name of the game | str
-  -st, --started-at
-                        Starting date/time | datetime
-  -e, --ended-at    Ending date/time | datetime
-  -l, --limit       Number of clips to scrape | int = 1000
+  -h, --help            show this help message and exit
+  -u, --username    username of the streamer [type: str?]
+  -g, --game        Name of the game [type: str?]
+  -s, --started-at  starting date/time [type: datetime?]
+  -e, --ended-at    ending date/time [type: datetime?]
+  -l, --limit       maximum number of clips to scrape [type: int, default=1000]
 ```
 
 ```
-usage: twitch-scraper profiles [-h] -s -c -b [-v] [-d] [-ca] -u
+usage: twitch-scraper SAVE-DIR CLIENT-ID BEARER profiles [-h] [USERNAMES ...]
 
 Scrape Twitch.tv user profiles
 
+positional arguments:
+  USERNAMES   usernames of profiles to scrape [type: list[str]] (*)
+
 options:
-  -h, --help       show this help message and exit
-  -s, --save-dir   directory to save files | str (*)
-  -c, --client-id  twitch.tv client ID | str (*)
-  -b, --bearer     twitch.tv bearer token | str (*)
-  -v, --verbose    print status messages | bool = True
-  -d, --delay      delay between requests (seconds) | float = 0.5
-  -ca, --cache     path to cache file | str
-  -u, --usernames  usernames of profiles to scrape | list[str] (*)
+  -h, --help  show this help message and exit
 ```
 
 # Library usage
