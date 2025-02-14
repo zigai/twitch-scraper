@@ -8,7 +8,7 @@ REQUIREMENTS = (HERE / "requirements.txt").read_text()
 
 setup(
     name="twitch-scraper",
-    version="0.0.4",
+    version="0.0.5",
     description="Twitch profile & clip scraper",
     long_description=README,
     long_description_content_type="text/markdown",

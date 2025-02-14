@@ -1,12 +1,12 @@
 from typing import Any
 
 import requests
+from stdl import fs
+from stdl.dt import datetime, parse_datetime_str
+
 from twitch_scraper.clip import TwitchClip
 from twitch_scraper.user import TwitchUser
 from twitch_scraper.util import date_to_rfc3339
-
-from stdl import fs
-from stdl.dt import datetime, parse_datetime_str
 
 
 class TwitchAuthError(Exception):
