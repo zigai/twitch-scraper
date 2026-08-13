@@ -4,10 +4,24 @@ Twitch profile & clip scraper. Twitch API credentials are required.
 
 ## Installation
 
+### Run without installing
+
+```sh
+uvx --from git+https://github.com/zigai/twitch-scraper.git twitch-scraper --help
+```
+
+### Install globally
+
+```sh
+uv tool install git+https://github.com/zigai/twitch-scraper.git
+```
+
+### As a dependency
+
 ```sh
 uv add git+https://github.com/zigai/twitch-scraper.git
 ```
-
+or
 ```sh
 pip install git+https://github.com/zigai/twitch-scraper.git
 ```
