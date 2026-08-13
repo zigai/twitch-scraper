@@ -4,11 +4,12 @@ from stdl.log import br
 from stdl.st import FG, colored
 
 from twitch_scraper.client import TwitchApiClient
+from twitch_scraper.util import JsonValue
 
 
 class TwitchScraper(TwitchApiClient):
     """
-    Twitch.tv scraper
+    Twitch.tv scraper.
 
     Args:
         save_dir (str): save directory
@@ -29,7 +30,7 @@ class TwitchScraper(TwitchApiClient):
         verbose: bool = True,
     ) -> None:
         """
-        Twitch.tv clip / profile scraper
+        Twitch.tv clip / profile scraper.
 
         Args:
             save_dir (str): directory to save files
@@ -39,17 +40,9 @@ class TwitchScraper(TwitchApiClient):
             cache (str): path to cache file
             verbose (bool): print status messages
         """
-        super().__init__(client_id, bearer, cache, verbose)
+        super().__init__(client_id, bearer, cache, verbose=verbose)
         self.save_directory = save_dir
         self.delay_seconds = delay
-
-    def _log(self, text: str):
-        if self.verbose:
-            print(text)
-
-    def _br(self):
-        if self.verbose:
-            br()
 
     def clips(
         self,
@@ -58,9 +51,9 @@ class TwitchScraper(TwitchApiClient):
         started_at: datetime | None = None,
         ended_at: datetime | None = None,
         limit: int = 1000,
-    ):
+    ) -> None:
         """
-        Scrape Twitch.tv clips
+        Scrape Twitch.tv clips.
 
         Args:
             username (str): username of the streamer
@@ -73,25 +66,23 @@ class TwitchScraper(TwitchApiClient):
         clips = self.get_clips(username, game, started_at, ended_at, limit)
         for clip in clips:
             self._log(
-                (
-                    f"{colored('Downloading',FG.LIGHT_GREEN)} "
-                    f"'{colored(clip.title,FG.BOLD)}'"
-                    f" ({colored(clip.url,FG.LIGHT_BLUE)})"
-                )
+                f"{colored('Downloading', FG.LIGHT_GREEN)} "
+                f"'{colored(clip.title, FG.BOLD)}'"
+                f" ({colored(clip.url, FG.LIGHT_BLUE)})"
             )
             clip.download(directory=self.save_directory, progressbar=self.verbose)
             self._br()
             time.sleep(self.delay_seconds)
 
-    def profiles(self, usernames: list[str]):
+    def profiles(self, usernames: list[str]) -> None:
         """
-        Scrape Twitch.tv user profiles
+        Scrape Twitch.tv user profiles.
 
         Args:
             usernames (list[str]) : usernames of profiles to scrape
 
         """
-        data = []
+        data: list[JsonValue] = []
         for username in usernames:
             user = self.get_user(username=username)
             self._log(f"Getting data for user '{colored(username, FG.LIGHT_BLUE)}' ...")
@@ -106,3 +97,11 @@ class TwitchScraper(TwitchApiClient):
         filename = f"users.{today}.json"
         path = f"{self.save_directory}{os.sep}{filename}"
         json_dump(data, path=path)
+
+    def _log(self, text: str) -> None:
+        if self.verbose:
+            print(text)
+
+    def _br(self) -> None:
+        if self.verbose:
+            br()

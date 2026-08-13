@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import os
 import re
 from dataclasses import dataclass
+from typing import Any
 
 from stdl.dt import date_fmt, datetime, parse_datetime_str
 from stdl.net import download
@@ -24,22 +27,25 @@ class TwitchClip:
     video_id: int | None = None
 
     @property
-    def file_url(self):
-        """Get the clip url from thumbnail url"""
+    def file_url(self) -> str:
+        """Get the clip url from the thumbnail url."""
         p = r"-preview-[\d]+x[\d]+\.[\w]+"
         s = re.split(p, self.thumbnail_url)
+
         return s[0] + ".mp4"
 
-    def _get_filename(self):
+    def _get_filename(self) -> str:
         dt = date_fmt(self.created_at.date())
         title = self.title.replace(".", "_").replace(" ", "_").strip()
         # game_id.streamer.view_count.duration.title.date.language.mp4
         filename = f"{self.game_id}.{self.streamer}{self.view_count}.{int(self.duration)}.{title}.{dt}.{self.language}.mp4"
+
         return sf.filename(filename)
 
     def download(
-        self, directory: str, maxsize: int | str | None = None, progressbar=False
-    ):
+        self, directory: str, maxsize: int | str | None = None, progressbar: bool = False
+    ) -> str:
+        """Download the clip to `directory` and return the saved path."""
         path = directory + os.sep + self._get_filename()
         r = download(
             url=self.file_url,
@@ -48,11 +54,12 @@ class TwitchClip:
             progressbar=progressbar,
             maxsize=maxsize,
         )
+
         return r[0]
 
     @staticmethod
-    def from_json(data: dict):
-        """TwitchClip from json object returned by Twitch Helix API"""
+    def from_json(data: dict[str, Any]) -> TwitchClip:
+        """TwitchClip from a json object returned by the Twitch Helix API."""
         return TwitchClip(
             clip_id=data["id"],
             url=data["url"],
