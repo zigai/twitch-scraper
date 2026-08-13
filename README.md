@@ -29,7 +29,8 @@ pip install git+https://github.com/zigai/twitch-scraper.git
 ## CLI usage
 
 ```
-usage: twitch-scraper [-h] [-d] [-c] [--verbose | --no-verbose] SAVE-DIR CLIENT-ID BEARER {clips,profiles} ...
+usage: twitch-scraper [--help] [-c ] [-d ] [--no-verbose]
+                      SAVE-DIR CLIENT-ID BEARER {clips,profiles} ...
 
  _            _ _       _
 | |___      _(_) |_ ___| |__    ___  ___ _ __ __ _ _ __   ___ _ __
@@ -39,46 +40,49 @@ usage: twitch-scraper [-h] [-d] [-c] [--verbose | --no-verbose] SAVE-DIR CLIENT-
                                                   |_|
 
 positional arguments:
-  SAVE-DIR                              directory to save files [type: str] (*)
-  CLIENT-ID                             twitch.tv client ID [type: str] (*)
-  BEARER                                twitch.tv bearer token [type: str] (*)
-  {clips,profiles} ...
+  SAVE-DIR              directory to save files
+  CLIENT-ID             twitch.tv client ID
+  BEARER                twitch.tv bearer token
 
 options:
-  -h, --help                            show this help message and exit
-  -d, --delay                           delay between requests (seconds) [type: float, default=0.5]
-  -c, --cache                           path to cache file [type: str?]
-  --verbose, --no-verbose               print status messages.
+  --help                Show this help message and exit
+  -c, --cache           path to cache file
+  -d, --delay           delay between requests (seconds) [default: 0.5]
+  -n, --no-verbose      print status messages [default: True]
 
 commands:
-   clips            Scrape Twitch.tv clips.
-   profiles         Scrape Twitch.tv user profiles
+  clips                 Scrape Twitch.tv clips.
+  profiles              Scrape Twitch.tv user profiles.
 ```
 
 ```
-usage: twitch-scraper SAVE-DIR CLIENT-ID BEARER clips [-h] [-u] [-g] [-s] [-e] [-l]
+usage: twitch-scraper SAVE-DIR CLIENT-ID BEARER clips [--help] [-e ] [-g ]
+                                                      [-l ] [-s ] [-u ]
 
 Scrape Twitch.tv clips.
 
 options:
-  -h, --help            show this help message and exit
-  -u, --username    username of the streamer [type: str?]
-  -g, --game        Name of the game [type: str?]
-  -s, --started-at  starting date/time [type: datetime?]
-  -e, --ended-at    ending date/time [type: datetime?]
-  -l, --limit       maximum number of clips to scrape [type: int, default=1000]
+  --help                Show this help message and exit
+  -e, --ended-at        ending date/time
+  -g, --game            Name of the game
+  -l, --limit           maximum number of clips to scrape [default: 1000]
+  -s, --started-at      starting date/time
+  -u, --username        username of the streamer
 ```
 
 ```
-usage: twitch-scraper SAVE-DIR CLIENT-ID BEARER profiles [-h] [USERNAMES ...]
+usage: twitch-scraper SAVE-DIR CLIENT-ID BEARER profiles [--help]
+                                                         USERNAMES
+                                                         [USERNAMES ...]
 
-Scrape Twitch.tv user profiles
+Scrape Twitch.tv user profiles.
 
 positional arguments:
-  USERNAMES   usernames of profiles to scrape [type: list[str]] (*)
+  USERNAMES [USERNAMES ...]
+                        usernames of profiles to scrape
 
 options:
-  -h, --help  show this help message and exit
+  --help                Show this help message and exit
 ```
 
 ## Library usage
