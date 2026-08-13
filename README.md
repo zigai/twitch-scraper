@@ -1,12 +1,19 @@
-# Twitch scraper
-Twitch clip/profile scraper.
-Twitch API credentials are required.
+# twitch-scraper
 
-# Installation
+Twitch profile & clip scraper. Twitch API credentials are required.
+
+## Installation
+
+```sh
+uv add git+https://github.com/zigai/twitch-scraper.git
 ```
+
+```sh
 pip install git+https://github.com/zigai/twitch-scraper.git
 ```
-# CLI usage
+
+## CLI usage
+
 ```
 usage: twitch-scraper [-h] [-d] [-c] [--verbose | --no-verbose] SAVE-DIR CLIENT-ID BEARER {clips,profiles} ...
 
@@ -60,9 +67,11 @@ options:
   -h, --help  show this help message and exit
 ```
 
-# Library usage
+## Library usage
+
 ```python
 from datetime import datetime, timedelta
+
 from twitch_scraper import TwitchScraper
 
 scraper = TwitchScraper(
@@ -80,6 +89,6 @@ scraper.clips(
 )
 ```
 
+## License
 
-# License
-[MIT License](https://github.com/zigai/twitch-scraper/blob/master/LICENSE)
+[MIT](LICENSE)
