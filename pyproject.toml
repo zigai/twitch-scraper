@@ -1,0 +1,265 @@
+[project]
+name = "twitch-scraper"
+version = "0.0.5"
+description = "Twitch profile & clip scraper"
+authors = [{ name = "Žiga Ivanšek", email = "ziga.ivansek@gmail.com" }]
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["stdl>=0.7.1", "interfacy>=0.7.0", "requests>=2.34.2"]
+
+classifiers = [
+    "Typing :: Typed",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+keywords = [
+    "twitch",
+    "scraper",
+    "clips",
+    "profiles",
+    "cli",
+]
+
+[project.scripts]
+twitch-scraper = "twitch_scraper.cli:cli"
+
+[project.optional-dependencies]
+test = ["pytest>=9.1.1", "pytest-mock>=3.15.1", "coverage>=7.15.4"]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-mock>=3.15.1",
+    "coverage>=7.15.4",
+    "ruff==0.16.2",
+    "pre-commit>=4.6.2",
+    "pyrefly>=1.2.0",
+    "codespell>=2.4.3",
+    "rattle-lint>=2.7.1",
+]
+
+[dependency-groups]
+test = ["pytest>=9.1.1", "pytest-mock>=3.15.1", "coverage>=7.15.4"]
+dev = [
+    { include-group = "test" },
+    "ruff==0.16.2",
+    "pre-commit>=4.6.2",
+    "pyrefly>=1.2.0",
+    "codespell>=2.4.3",
+    "rattle-lint>=2.7.1",
+]
+
+[tool.uv]
+default-groups = ["test"]
+
+[project.urls]
+Repository = "https://github.com/zigai/twitch-scraper"
+Issues = "https://github.com/zigai/twitch-scraper/issues"
+Homepage = "https://github.com/zigai/twitch-scraper"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "twitch_scraper"
+module-root = ""
+
+[tool.coverage.run]
+source = ["twitch_scraper"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+]
+omit = [
+    "tests/*",
+    "tests/**",
+]
+
+[tool.pyrefly]
+project-includes = ["twitch_scraper"]
+project-excludes = ["tests/**"]
+search-path = ["."]
+disable-search-path-heuristics = true
+python-version = "3.10"
+enabled-ignores = ["type", "pyrefly"]
+use-ignore-files = true
+check-unannotated-defs = true
+infer-return-types = "checked"
+infer-with-first-use = true
+strict-callable-subtyping = false
+spec-compliant-overloads = false
+
+[tool.rattle]
+root = true
+enable = [
+    "blank-line-after-control-block",
+    "blank-line-after-terminal-control-block",
+    "blank-line-before-branch",
+    "blank-line-before-unrelated-block",
+    "no-suite-leading-trailing-blank-lines",
+    "module-all-at-bottom",
+    "no-underscore-all-exports",
+    "forbidden-call",
+    "no-relative-imports",
+    "no-underscore-import-aliases",
+    "no-unsafe-tempfile-factories",
+    "no-annotated-self",
+    "no-exception-message-variables",
+    "no-str-exception-translation",
+    "no-underscore-class",
+    "public-method-order",
+    "no-bare-object-annotations",
+    "no-named-tuple",
+    "no-static-if-condition",
+    "sorted-attributes",
+    "use-callable-ellipsis",
+]
+
+[tool.rattle.options."forbidden-call"]
+forbidden_calls = ["typing.cast"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ERA",
+    "FBT002",
+    "COM",
+    "CPY",
+    "DJ",
+    "ANN003",
+    "FIX",
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+    "D205",
+    "D203",
+    "D212",
+    "E501",
+    "PIE804",
+    "S101",
+    "EM101",
+    "PYI041",
+    "PYI051",
+    "PYI046",
+    "PYI047",
+    "PYI049",
+    "PYI053",
+    "PYI054",
+    "RET501",
+    "SIM910",
+    "N812",
+    "PLC0415",
+    "PLR0904",
+    "PLR0913",
+    "PLR0917",
+    "PLR2004",
+    "PLR1711",
+    "TRY003",
+    "T20",
+    "SIM105",
+    "RET504",
+    "PLR0912",
+    "PLR0915",
+    "TD",
+    "TC001",
+    "TC002",
+    "TC003",
+    "TC006",
+    "PLW0603",
+    "EM102",
+    "PLW2901",
+    "RSE102",
+    "PGH004",
+    "N806",
+    "FBT001",
+]
+exclude = ["build"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+    "F401", # Unused import
+    "E402", # Module import not at top of file
+]
+"**/tests/**/*.py" = [
+    "S104",
+    "S105",
+    "S106",
+    "TRY004",
+    "RUF003",
+    "RUF012",
+    "UP031",
+    "SLF001",
+    "ARG",
+    "N806",
+    "ANN001",
+    "ANN201",
+    "ANN202",
+    "ANN204",
+    "ANN401",
+    "S",
+    "INP001",
+    "PLW0108",
+    "EM102",
+    "FBT001",
+    "SIM300",
+    "FLY002",
+    "A002",
+    "A004",
+]
+"examples/*.py" = ["INP001"]
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = [
+    "pydantic.validator",
+    "declared_attr",
+    "expression",
+    "comparator",
+]
+
+[tool.ruff.lint.flake8-builtins]
+ignorelist = ["id", "input"]
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+    "pydantic.BaseModel",
+    "sqlalchemy.orm.DeclarativeBase",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"
+
+[tool.ruff.lint.isort]
+known-first-party = ["twitch_scraper", "tests"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.codespell]
+skip = '.git,uv.lock'
