@@ -2,7 +2,7 @@
 
 ## Environment
 
-For local development, you need Python 3.10 or later installed.
+For local development, you need Python 3.11 or later installed.
 We use [uv](https://docs.astral.sh/uv/) for project and environment management, and [just](https://github.com/casey/just) as our command runner.
 
 ## Dependencies

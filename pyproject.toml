@@ -6,7 +6,7 @@ authors = [{ name = "Žiga Ivanšek", email = "ziga.ivansek@gmail.com" }]
 license = "MIT"
 license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = ["stdl>=0.7.1", "interfacy>=0.7.0", "requests>=2.34.2"]
 
 classifiers = [
@@ -17,7 +17,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -96,7 +95,7 @@ project-includes = ["twitch_scraper"]
 project-excludes = ["tests/**"]
 search-path = ["."]
 disable-search-path-heuristics = true
-python-version = "3.10"
+python-version = "3.11"
 enabled-ignores = ["type", "pyrefly"]
 use-ignore-files = true
 check-unannotated-defs = true
