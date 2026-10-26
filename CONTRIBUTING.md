@@ -10,7 +10,7 @@ We use [uv](https://docs.astral.sh/uv/) for project and environment management, 
 To install this package and its development dependencies, run:
 
 ```sh
-just sync
+just setup
 ```
 
 or
