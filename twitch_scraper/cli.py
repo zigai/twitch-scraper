@@ -4,6 +4,7 @@ from interfacy import Interfacy, Param
 from interfacy.help.content import HelpContent
 from interfacy.plugins import HelpHookContext, InterfacyPlugin
 from stdl.st import FG, ST, colored
+from typing_extensions import override
 
 from twitch_scraper.scraper import TwitchScraper
 
@@ -22,7 +23,8 @@ DESCRIPTION = colored(
 
 
 class HelpHeader(InterfacyPlugin):
-    def transform_help(self, _context: HelpHookContext, content: HelpContent) -> HelpContent:
+    @override
+    def transform_help(self, context: HelpHookContext, content: HelpContent) -> HelpContent:
         sections = []
         for section in content.sections:
             if section.kind == "usage":

@@ -935,6 +935,7 @@ dependencies = [
     { name = "interfacy" },
     { name = "requests" },
     { name = "stdl" },
+    { name = "typing-extensions" },
 ]
 
 [package.optional-dependencies]
@@ -987,6 +988,7 @@ requires-dist = [
     { name = "requests", specifier = ">=2.34.2" },
     { name = "ruff", marker = "extra == 'dev'", specifier = "==0.16.10" },
     { name = "stdl", specifier = ">=0.7.1" },
+    { name = "typing-extensions", specifier = ">=4.15.0" },
 ]
 provides-extras = ["test", "dev"]
 
