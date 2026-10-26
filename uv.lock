@@ -733,7 +733,7 @@ wheels = [
 
 [[package]]
 name = "rattle-lint"
-version = "3.3.0"
+version = "3.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "interfacy" },
@@ -744,9 +744,9 @@ dependencies = [
     { name = "platformdirs" },
     { name = "trailrunner" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/10/52/aaa432017824d5ad23f2d19f4d264bc33f02ffa9577d14260e0343055737/rattle_lint-3.3.0.tar.gz", hash = "sha256:9bbc19c161642e02033b2e317c7209abc2270690bf27c62a241b0eb2be3d706b", size = 327666, upload-time = "2026-10-12T01:06:45.527Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/51/e7/6a747a2b16fcb02bc6d2740706f612c44a66f8d7f0704e7255e9d036d77d/rattle_lint-3.4.0.tar.gz", hash = "sha256:dec9c704d22557bee42c1e3124a85710884cc6438cdd517199dd81eb0544e725", size = 330238, upload-time = "2026-10-16T08:31:33.61Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/3f/12a77deda116388666d2ef225aec9ddc7a4be49b688dcd4664336225e63e/rattle_lint-3.3.0-py3-none-any.whl", hash = "sha256:b1930f2e3a337cf8e18948f134eb8ac1e43af6b49477b273982e8c744b1e84db", size = 213123, upload-time = "2026-10-12T01:06:44.279Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/60/a986d5af7b3d89d6e294e94910f4ec0cef3d845e36b8fe50a73cb09ff9da/rattle_lint-3.4.0-py3-none-any.whl", hash = "sha256:f3ce08665bad1d8fe289caaef20d6f8f7d9813f5e0a687a5b86716aef8a783f2", size = 212388, upload-time = "2026-10-16T08:31:32.122Z" },
 ]
 
 [[package]]
@@ -984,7 +984,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'test'", specifier = ">=9.1.1" },
     { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.15.1" },
     { name = "pytest-mock", marker = "extra == 'test'", specifier = ">=3.15.1" },
-    { name = "rattle-lint", marker = "extra == 'dev'", specifier = ">=2.7.1" },
+    { name = "rattle-lint", marker = "extra == 'dev'", specifier = ">=3.4.0" },
     { name = "requests", specifier = ">=2.34.2" },
     { name = "ruff", marker = "extra == 'dev'", specifier = "==0.16.10" },
     { name = "stdl", specifier = ">=0.7.1" },
@@ -1000,7 +1000,7 @@ dev = [
     { name = "pyrefly", specifier = ">=1.2.0" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "pytest-mock", specifier = ">=3.15.1" },
-    { name = "rattle-lint", specifier = ">=3.3.0" },
+    { name = "rattle-lint", specifier = ">=3.4.0" },
     { name = "ruff", specifier = "==0.16.10" },
 ]
 test = [

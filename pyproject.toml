@@ -50,7 +50,7 @@ dev = [
     "pre-commit>=4.6.2",
     "pyrefly>=1.2.0",
     "codespell>=2.4.3",
-    "rattle-lint>=2.7.1",
+    "rattle-lint>=3.4.0",
 ]
 
 [dependency-groups]
@@ -61,7 +61,7 @@ dev = [
     "pre-commit>=4.6.2",
     "pyrefly>=1.2.0",
     "codespell>=2.4.3",
-    "rattle-lint>=3.3.0",
+    "rattle-lint>=3.4.0",
 ]
 
 [tool.uv]
