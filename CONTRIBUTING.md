@@ -43,7 +43,6 @@ To run linting:
 just lint
 ```
 
-
 ### Formatting
 
 [ruff](https://docs.astral.sh/ruff/) is also used for code formatting. Refer to `pyproject.toml` for configuration details.
@@ -56,27 +55,14 @@ just format
 
 ## Testing
 
-We use [pytest](https://docs.pytest.org/en/stable/) for testing. The default Python version is configured in `.python-version`; the local test matrix is configured in `.python-versions`.
+We use [pytest](https://docs.pytest.org/en/stable/) for testing. The default Python version is configured in `.python-version`; tests use this pinned version.
 
 ```sh
 # Run tests on the default Python version
 uv run pytest -v
 
-# Run tests across all supported Python versions
+# Run tests on the pinned Python version
 just test
-```
-
-## Pre-commit Hooks
-
-We use [pre-commit](https://pre-commit.com/) to run quality checks automatically:
-
-```sh
-# Install pre-commit hooks
-uv tool install pre-commit
-pre-commit install
-
-# Run hooks manually on all files
-pre-commit run --all-files
 ```
 
 ## Documentation

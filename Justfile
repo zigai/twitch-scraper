@@ -1,145 +1,166 @@
 set positional-arguments
 set script-interpreter := ['uv', 'run', '--no-project', '--', 'python']
 
-_:
-  @just help
+# Run every configured linter on the whole project, stopping on failure
+lint: require-uv
+    @uv run --group dev ruff check .
 
-_require-uv:
-  @uv --version > /dev/null || (echo "Please install uv: https://docs.astral.sh/uv/" && exit 1)
+# Format every supported first-party file type
+format:
+    @uv run --group dev ruff format .
+    @git ls-files -co --exclude-standard -z | while IFS= read -r -d '' file; do if [[ -f $file ]]; then printf '%s\0' "$file"; fi; done | xargs -0 -r shfmt -f | xargs -r -d '\n' shfmt -w
+    @git ls-files -co --exclude-standard -- Justfile justfile "*.just" | while IFS= read -r file; do just --justfile "$file" --fmt; done
+    @just markdown fmt
 
-# Check code style and potential issues
-lint: _require-uv
-  uv run --group dev ruff check .
+# Apply safe lint autofixes, then format every supported file type
+fix: require-uv && format
+    uv run --group dev ruff check --fix .
 
-# Format code
-format: _require-uv
-  uv run --group dev ruff format .
-
-# Fix automatically fixable linting issues
-fix: _require-uv
-  uv run --group dev ruff check --fix .
-
-# Run tests across all supported Python versions
-[script]
-test *args: _require-uv
-  from pathlib import Path
-  import os
-  import shutil
-  import subprocess
-  import sys
-
-  versions = [
-      line.strip()
-      for line in Path(".python-versions").read_text(encoding="utf-8").splitlines()
-      if line.strip() and not line.lstrip().startswith("#")
-  ]
-  args = sys.argv[1:]
-  if args[:1] == ["--"]:
-      args = args[1:]
-
-  def colorize(text):
-      if os.environ.get("NO_COLOR"):
-          return text
-      if os.environ.get("FORCE_COLOR") or (sys.stdout.isatty() and os.environ.get("TERM") != "dumb"):
-          return f"\033[1;36m{text}\033[0m"
-      return text
-
-  def print_separator(label):
-      width = shutil.get_terminal_size(fallback=(120, 24)).columns
-      text = f" {label} "
-      if len(text) >= width:
-          print(colorize(label), flush=True)
-          return
-
-      left = (width - len(text)) // 2
-      right = width - len(text) - left
-      print(colorize(f"{'─' * left}{text}{'─' * right}"), flush=True)
-
-  def has_test_files():
-      tests_dir = Path("tests")
-      return tests_dir.exists() and any(
-          path.is_file()
-          for pattern in ("test_*.py", "*_test.py")
-          for path in tests_dir.rglob(pattern)
-      )
-
-  if not args and not has_test_files():
-      print("No tests found; skipping pytest.", flush=True)
-      raise SystemExit(0)
-
-  for py in versions:
-      print_separator(f"Python {py}")
-      result = subprocess.run([
-          "uv",
-          "run",
-          "--python",
-          py,
-          "--isolated",
-          "--group",
-          "test",
-          "--",
-          "pytest",
-          *args,
-      ])
-      if result.returncode:
-          raise SystemExit(result.returncode)
+# Run fast unit tests
+[positional-arguments]
+test *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ "${1:-}" == "--" ]]; then shift; fi
+    uv run --group dev pytest "$@" || [[ $? -eq 5 ]]
 
 # Build the package
-build: _require-uv
-  uv build
+build: require-uv
+    uv build
 
-# Install the CLI executable to ~/.local/bin
-install: _require-uv
-  uv tool install --editable .
+# Install commands for the current user
+install: require-uv && (report-install env("UV_TOOL_BIN_DIR", env("XDG_BIN_HOME", home_directory() / ".local/bin")) / "twitch-scraper")
+    uv tool install --reinstall --compile-bytecode .
 
 # Run the command-line interface
-run *args: _require-uv
-  uv run twitch-scraper {{args}}
+run *args: require-uv
+    uv run twitch-scraper {{ args }}
 
-# Setup or update local dev environment, keeps previously installed packages
-setup: _require-uv
-  uv sync --inexact --group dev
-  uv run --group dev pre-commit install
+# Install repository dependencies
+setup: require-uv
+    @uv sync --inexact --group dev
 
-# Run tests with coverage and show a coverage report
-[script]
-coverage: _require-uv
-  from pathlib import Path
-  import subprocess
+# Measure all local test suites and print coverage
+coverage: require-uv
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export COVERAGE_FILE="$PWD/.coverage"
+    uv run --group dev coverage erase
+    uv run --group dev coverage run -m pytest || [[ $? -eq 5 ]]
+    uv run --group dev coverage combine
+    uv run --group dev coverage report
 
-  tests_dir = Path("tests")
-  has_test_files = tests_dir.exists() and any(
-      path.is_file()
-      for pattern in ("test_*.py", "*_test.py")
-      for path in tests_dir.rglob(pattern)
-  )
-  if not has_test_files:
-      print("No tests found; skipping coverage.", flush=True)
-      raise SystemExit(0)
-
-  subprocess.run(["uv", "run", "coverage", "run", "-m", "pytest"], check=True)
-  subprocess.run(["uv", "run", "coverage", "report"], check=True)
-
-# Clean build artifacts and caches
-clean:
-  rm -rf .venv .pytest_cache .pyrefly .ruff_cache .mypy_cache
-  find . -type d -name "__pycache__" -exec rm -r {} +
+# Remove generated output, caches, and dependencies
+clean: (remove ".venv" "dist" "build" ".pytest_cache" ".pyrefly" ".ruff_cache" ".coverage" "htmlcov" ".coverage.*" "coverage.xml" "**/__pycache__")
 
 # Static type check with pyrefly
-typecheck: _require-uv
-  uv run --group dev pyrefly check --min-severity warn
+typecheck: require-uv
+    uv run --group dev pyrefly check
 
-# Check code for common misspellings
-spell: _require-uv
-  uv run --group dev codespell
+# Run the commit checks
+check: (run-checks "formatcheck" "lockcheck" "lint" "typecheck" "test")
 
-# Run all non-mutating quality checks
-check: lint test typecheck spell
-  uv run --group dev ruff format --check .
+# Check the same files and tools without writing
+formatcheck:
+    @uv run --group dev ruff format --check .
+    @git ls-files -co --exclude-standard -z | while IFS= read -r -d '' file; do if [[ -f $file ]]; then printf '%s\0' "$file"; fi; done | xargs -0 -r shfmt -f | xargs -r -d '\n' shfmt -d
+    @git ls-files -co --exclude-standard -- Justfile justfile "*.just" | while IFS= read -r file; do just --justfile "$file" --fmt --check; done
+    @just markdown check
 
-# List available commands
+# Synchronize dependency locks without upgrading dependencies
+[no-exit-message]
+lock:
+    @uv lock
+
+# Verify dependency manifests and locks without changing files
+[no-exit-message]
+lockcheck:
+    @uv lock --check
+
+# List available recipes
+[default]
 help:
-  @just --list
+    @just --list
 
 alias fmt := format
 alias cov := coverage
+
+[private]
+require-uv:
+    @uv --version > /dev/null || (echo "Please install uv: https://docs.astral.sh/uv/" && exit 1)
+
+[positional-arguments]
+[private]
+remove +paths:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    shopt -s nullglob globstar
+    size() { LC_ALL=C numfmt --from-unit=1024 --to=iec-i --suffix=B --format=%.1f "$1"; }
+    rows=() total=0
+    for pattern in "$@"; do
+        found=()
+        for path in $pattern; do
+            if [[ -e $path || -L $path ]]; then found+=("$path"); fi
+        done
+        if (( ${#found[@]} == 0 )); then continue; fi
+        kib=$(du -sck -- "${found[@]}" | tail -n1 | cut -f1)
+        rm -rf -- "${found[@]}"
+        label=$pattern
+        if (( ${#found[@]} > 1 )); then label+=" (${#found[@]})"; fi
+        rows+=("removed  $label|$(size "$kib")")
+        total=$(( total + kib ))
+    done
+    if [[ -n ${CLEAN_TOTAL_FILE:-} ]]; then echo "$total" >> "$CLEAN_TOTAL_FILE"; fi
+    if (( ${#rows[@]} == 0 )); then echo "nothing to clean"; exit 0; fi
+    printf '%s\n' "${rows[@]}" "total freed|$(size "$total")" | column -t -s '|' -R 2
+
+[positional-arguments]
+[private]
+report-install +paths:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rows=() warnings=() status=0
+    for path in "$@"; do
+        name=$(basename "$path") real=$(realpath "$path")
+        sized=$real venv=$(dirname "$(dirname "$real")")
+        [[ -f $venv/pyvenv.cfg ]] && sized=$venv
+        if ! version=$("$path" --version 2>&1); then
+            "$path" --help >/dev/null 2>&1 || { echo "failed     $path does not start" >&2; status=1; continue; }
+            version=-
+        fi
+        rows+=("installed|$name|${path/#$HOME/\~}|$(du -sk "$sized" | cut -f1 | LC_ALL=C numfmt --from-unit=1024 --to=iec-i --suffix=B --format=%.1f)|${version%%$'\n'*}")
+        first=$(command -v "$name")
+        [[ $(realpath "$first") == "$real" ]] || warnings+=("warning    $name: PATH finds ${first/#$HOME/\~} first")
+    done
+    if (( ${#rows[@]} )); then printf '%s\n' "${rows[@]}" | column -t -s '|' -R 4; fi
+    if (( ${#warnings[@]} )); then printf '%s\n' "${warnings[@]}"; fi
+    exit "$status"
+
+[positional-arguments]
+[private]
+run-checks +steps:
+    #!/usr/bin/env bash
+    set -uo pipefail
+    LC_NUMERIC=C
+    log_dir="${XDG_CACHE_HOME:-$HOME/.cache}/just-check"
+    mkdir -p "$log_dir"
+    log=$(mktemp "$log_dir/step.XXXXXX")
+    trap 'rm -f "$log"' EXIT
+    width=0 failed=()
+    for step in "$@"; do (( ${#step} > width )) && width=${#step}; done
+    for step in "$@"; do
+        read -ra command <<< "$step"
+        printf 'check  %-*s  ' "$width" "$step"
+        start=$EPOCHREALTIME
+        run=(just --justfile {{ quote(justfile()) }} "${command[@]}")
+        if [[ -t 1 ]]; then run=(script -qefc "${run[*]@Q}" /dev/null); fi
+        if "${run[@]}" < /dev/null > "$log" 2>&1; then status=ok; else status=FAIL; failed+=("$step"); fi
+        printf '%-4s  %7.1fs\n' "$status" "$(LC_NUMERIC=C awk -v a="$start" -v b="$EPOCHREALTIME" 'BEGIN { print b - a }')"
+        if [[ "$status" == FAIL ]]; then sed 's/\r$//; s/^/    /' "$log"; fi
+    done
+    if (( ${#failed[@]} )); then printf '%d of %d failed: %s\n' "${#failed[@]}" "$#" "${failed[*]}"; exit 1; fi
+    printf 'all %d passed\n' "$#"
+
+[private]
+markdown *args:
+    rumdl {{ args }} --disable MD001,MD013,MD024,MD025,MD026,MD031,MD032,MD033,MD034,MD036,MD041,MD058 --config 'MD060.enabled=true' --config 'MD060.style="aligned"' --config 'MD003.style="atx"' --config 'MD004.style="dash"' --config 'MD029.style="ordered"' --config 'MD046.style="fenced"' --config 'MD048.style="backtick"' --config 'MD049.style="asterisk"' --config 'MD050.style="asterisk"' --config 'MD055.style="leading_and_trailing"'

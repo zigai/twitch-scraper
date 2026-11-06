@@ -28,7 +28,7 @@ pip install git+https://github.com/zigai/twitch-scraper.git
 
 ## CLI usage
 
-```
+```text
 usage: twitch-scraper [--help] [-c ] [-d ] [--no-verbose]
                       SAVE-DIR CLIENT-ID BEARER {clips,profiles} ...
 
@@ -55,7 +55,7 @@ commands:
   profiles              Scrape Twitch.tv user profiles.
 ```
 
-```
+```text
 usage: twitch-scraper SAVE-DIR CLIENT-ID BEARER clips [--help] [-e ] [-g ]
                                                       [-l ] [-s ] [-u ]
 
@@ -70,7 +70,7 @@ options:
   -u, --username        username of the streamer
 ```
 
-```
+```text
 usage: twitch-scraper SAVE-DIR CLIENT-ID BEARER profiles [--help]
                                                          USERNAMES
                                                          [USERNAMES ...]

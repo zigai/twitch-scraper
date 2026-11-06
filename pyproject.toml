@@ -7,12 +7,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-    "stdl>=0.7.1",
-    "interfacy>=0.9.1",
-    "requests>=2.34.2",
-    "typing-extensions>=4.15.0",
-]
+dependencies = ["stdl>=0.7.1", "interfacy>=0.9.1", "requests>=2.34.2", "typing-extensions>=4.15.0"]
 
 classifiers = [
     "Typing :: Typed",
@@ -29,13 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.15",
 ]
 
-keywords = [
-    "twitch",
-    "scraper",
-    "clips",
-    "profiles",
-    "cli",
-]
+keywords = ["twitch", "scraper", "clips", "profiles", "cli"]
 
 [project.scripts]
 twitch-scraper = "twitch_scraper.cli:cli"
@@ -47,25 +36,22 @@ dev = [
     "pytest-mock>=3.15.1",
     "coverage>=7.15.4",
     "ruff==0.16.10",
-    "pre-commit>=4.6.2",
     "pyrefly>=1.2.0",
-    "codespell>=2.4.3",
     "rattle-lint>=3.4.0",
 ]
 
 [dependency-groups]
-test = ["pytest>=9.1.1", "pytest-mock>=3.15.1", "coverage>=7.15.4"]
 dev = [
-    { include-group = "test" },
+    "pytest>=9.1.1",
+    "pytest-mock>=3.15.1",
+    "coverage>=7.15.4",
     "ruff==0.16.10",
-    "pre-commit>=4.6.2",
     "pyrefly>=1.2.0",
-    "codespell>=2.4.3",
     "rattle-lint>=3.4.0",
 ]
 
 [tool.uv]
-default-groups = ["test"]
+default-groups = ["dev"]
 
 [project.urls]
 Repository = "https://github.com/zigai/twitch-scraper"
@@ -83,6 +69,8 @@ module-root = ""
 [tool.coverage.run]
 source = ["twitch_scraper"]
 branch = true
+parallel = true
+patch = ["subprocess"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -91,10 +79,7 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "if typing.TYPE_CHECKING:",
 ]
-omit = [
-    "tests/*",
-    "tests/**",
-]
+omit = ["tests/*", "tests/**"]
 
 [tool.pyrefly]
 project-includes = ["twitch_scraper"]
@@ -238,27 +223,20 @@ exclude = ["build"]
 "examples/*.py" = ["INP001"]
 
 [tool.ruff.lint.pep8-naming]
-classmethod-decorators = [
-    "pydantic.validator",
-    "declared_attr",
-    "expression",
-    "comparator",
-]
+classmethod-decorators = ["pydantic.validator", "declared_attr", "expression", "comparator"]
 
 [tool.ruff.lint.flake8-builtins]
 ignorelist = ["id", "input"]
 
 [tool.ruff.lint.flake8-type-checking]
-runtime-evaluated-base-classes = [
-    "pydantic.BaseModel",
-    "sqlalchemy.orm.DeclarativeBase",
-]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "sqlalchemy.orm.DeclarativeBase"]
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "lf"
+exclude = []
 
 [tool.ruff.lint.isort]
 known-first-party = ["twitch_scraper", "tests"]
@@ -266,5 +244,3 @@ known-first-party = ["twitch_scraper", "tests"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.codespell]
-skip = '.git,uv.lock'
