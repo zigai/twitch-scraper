@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+git diff --cached --check
+exec python3 "$SKILLS_REPOSITORY/catalog/global/commit/scripts/commit.py" stamp --staged -- just formatcheck
